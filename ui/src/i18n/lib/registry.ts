@@ -8,9 +8,9 @@ type LazyLocaleRegistration = {
   loader: () => Promise<LocaleModule>;
 };
 
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "vi";
 
-const LAZY_LOCALES: readonly LazyLocale[] = ["zh-CN", "zh-TW", "pt-BR", "de", "es"];
+const LAZY_LOCALES: readonly LazyLocale[] = ["zh-CN", "zh-TW", "pt-BR", "de", "es", "vi"];
 
 const LAZY_LOCALE_REGISTRY: Record<LazyLocale, LazyLocaleRegistration> = {
   "zh-CN": {
@@ -32,6 +32,10 @@ const LAZY_LOCALE_REGISTRY: Record<LazyLocale, LazyLocaleRegistration> = {
   es: {
     exportName: "es",
     loader: () => import("../locales/es.ts"),
+  },
+  vi: {
+    exportName: "vi",
+    loader: () => import("../locales/vi.ts"),
   },
 };
 
@@ -57,6 +61,9 @@ export function resolveNavigatorLocale(navLang: string): Locale {
   }
   if (navLang.startsWith("es")) {
     return "es";
+  }
+  if (navLang.startsWith("vi")) {
+    return "vi";
   }
   return DEFAULT_LOCALE;
 }

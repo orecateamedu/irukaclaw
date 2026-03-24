@@ -16,11 +16,11 @@ import {
 import { analyzeConfigSchema, renderConfigForm, SECTION_META } from "./config-form.ts";
 
 const BORDER_RADIUS_LABELS: Record<BorderRadiusStop, string> = {
-  0: "None",
-  25: "Slight",
-  50: "Default",
-  75: "Round",
-  100: "Full",
+  0: "Vuông",
+  25: "Nhẹ",
+  50: "Mặc định",
+  75: "Tròn",
+  100: "Rất tròn",
 };
 
 export type ConfigProps = {
@@ -356,75 +356,75 @@ type SectionCategory = {
 const SECTION_CATEGORIES: SectionCategory[] = [
   {
     id: "core",
-    label: "Core",
+    label: "Cốt Lõi",
     sections: [
-      { key: "env", label: "Environment" },
-      { key: "auth", label: "Authentication" },
-      { key: "update", label: "Updates" },
-      { key: "meta", label: "Meta" },
-      { key: "logging", label: "Logging" },
-      { key: "diagnostics", label: "Diagnostics" },
-      { key: "cli", label: "Cli" },
-      { key: "secrets", label: "Secrets" },
+      { key: "env", label: "Biến Môi Trường" },
+      { key: "auth", label: "Xác Thực" },
+      { key: "update", label: "Cập Nhật" },
+      { key: "meta", label: "Siêu Dữ Liệu" },
+      { key: "logging", label: "Nhật Ký" },
+      { key: "diagnostics", label: "Chẩn Đoán" },
+      { key: "cli", label: "Dòng Lệnh" },
+      { key: "secrets", label: "Bí Mật" },
     ],
   },
   {
     id: "ai",
-    label: "AI & Agents",
+    label: "AI & Trợ Lý",
     sections: [
-      { key: "agents", label: "Agents" },
-      { key: "models", label: "Models" },
-      { key: "skills", label: "Skills" },
-      { key: "tools", label: "Tools" },
-      { key: "memory", label: "Memory" },
-      { key: "session", label: "Session" },
+      { key: "agents", label: "Trợ Lý AI" },
+      { key: "models", label: "Mô Hình AI" },
+      { key: "skills", label: "Kỹ Năng" },
+      { key: "tools", label: "Công Cụ" },
+      { key: "memory", label: "Bộ Nhớ" },
+      { key: "session", label: "Phiên Làm Việc" },
     ],
   },
   {
     id: "communication",
-    label: "Communication",
+    label: "Giao Tiếp",
     sections: [
-      { key: "channels", label: "Channels" },
-      { key: "messages", label: "Messages" },
-      { key: "broadcast", label: "Broadcast" },
-      { key: "talk", label: "Talk" },
-      { key: "audio", label: "Audio" },
+      { key: "channels", label: "Kênh Nhắn Tin" },
+      { key: "messages", label: "Tin Nhắn" },
+      { key: "broadcast", label: "Phát Sóng" },
+      { key: "talk", label: "Giọng Nói" },
+      { key: "audio", label: "Âm Thanh" },
     ],
   },
   {
     id: "automation",
-    label: "Automation",
+    label: "Tự Động Hóa",
     sections: [
-      { key: "commands", label: "Commands" },
+      { key: "commands", label: "Lệnh Tùy Chỉnh" },
       { key: "hooks", label: "Hooks" },
-      { key: "bindings", label: "Bindings" },
-      { key: "cron", label: "Cron" },
-      { key: "approvals", label: "Approvals" },
-      { key: "plugins", label: "Plugins" },
+      { key: "bindings", label: "Phím Tắt" },
+      { key: "cron", label: "Lịch Trình" },
+      { key: "approvals", label: "Phê Duyệt" },
+      { key: "plugins", label: "Plugin" },
     ],
   },
   {
     id: "infrastructure",
-    label: "Infrastructure",
+    label: "Hạ Tầng",
     sections: [
       { key: "gateway", label: "Gateway" },
-      { key: "web", label: "Web" },
-      { key: "browser", label: "Browser" },
+      { key: "web", label: "Máy Chủ Web" },
+      { key: "browser", label: "Trình Duyệt" },
       { key: "nodeHost", label: "NodeHost" },
       { key: "canvasHost", label: "CanvasHost" },
-      { key: "discovery", label: "Discovery" },
-      { key: "media", label: "Media" },
-      { key: "acp", label: "Acp" },
-      { key: "mcp", label: "Mcp" },
+      { key: "discovery", label: "Khám Phá" },
+      { key: "media", label: "Phương Tiện" },
+      { key: "acp", label: "ACP" },
+      { key: "mcp", label: "MCP" },
     ],
   },
   {
     id: "appearance",
-    label: "Appearance",
+    label: "Giao Diện",
     sections: [
-      { key: "__appearance__", label: "Theme" },
+      { key: "__appearance__", label: "Giao Diện (Theme)" },
       { key: "ui", label: "UI" },
-      { key: "wizard", label: "Setup Wizard" },
+      { key: "wizard", label: "Thiết Lập Ban Đầu" },
     ],
   },
 ];
@@ -563,17 +563,17 @@ function renderDiffValue(path: string, value: unknown, _uiHints: ConfigUiHints):
 
 type ThemeOption = { id: ThemeName; label: string; description: string; icon: TemplateResult };
 const THEME_OPTIONS: ThemeOption[] = [
-  { id: "claw", label: "Claw", description: "Chroma family", icon: icons.zap },
-  { id: "knot", label: "Knot", description: "Black & red", icon: icons.link },
-  { id: "dash", label: "Dash", description: "Chocolate blueprint", icon: icons.barChart },
+  { id: "claw", label: "Claw", description: "Họ màu Chroma", icon: icons.zap },
+  { id: "knot", label: "Knot", description: "Màu đen và đỏ", icon: icons.link },
+  { id: "dash", label: "Dash", description: "Bản phác thảo Chỉnh nâu", icon: icons.barChart },
 ];
 
 function renderAppearanceSection(props: ConfigProps) {
   return html`
     <div class="settings-appearance">
       <div class="settings-appearance__section">
-        <h3 class="settings-appearance__heading">Theme</h3>
-        <p class="settings-appearance__hint">Choose a theme family.</p>
+        <h3 class="settings-appearance__heading">Giao Diện (Theme)</h3>
+        <p class="settings-appearance__hint">Chọn bộ giao diện phù hợp.</p>
         <div class="settings-theme-grid">
           ${THEME_OPTIONS.map(
             (opt) => html`
@@ -603,8 +603,8 @@ function renderAppearanceSection(props: ConfigProps) {
       </div>
 
       <div class="settings-appearance__section">
-        <h3 class="settings-appearance__heading">Roundness</h3>
-        <p class="settings-appearance__hint">Adjust corner radius across the UI.</p>
+        <h3 class="settings-appearance__heading">Bo Góc</h3>
+        <p class="settings-appearance__hint">Chỉnh độ bo góc trên toàn bộ giao diện.</p>
         <div class="settings-roundness">
           <div class="settings-roundness__options">
             ${BORDER_RADIUS_STOPS.map(
@@ -627,24 +627,24 @@ function renderAppearanceSection(props: ConfigProps) {
       </div>
 
       <div class="settings-appearance__section">
-        <h3 class="settings-appearance__heading">Connection</h3>
+        <h3 class="settings-appearance__heading">Kết Nối</h3>
         <div class="settings-info-grid">
           <div class="settings-info-row">
             <span class="settings-info-row__label">Gateway</span>
             <span class="settings-info-row__value mono">${props.gatewayUrl || "-"}</span>
           </div>
           <div class="settings-info-row">
-            <span class="settings-info-row__label">Status</span>
+            <span class="settings-info-row__label">Trạng thái</span>
             <span class="settings-info-row__value">
               <span class="settings-status-dot ${props.connected ? "settings-status-dot--ok" : ""}"></span>
-              ${props.connected ? "Connected" : "Offline"}
+              ${props.connected ? "Đã kết nối" : "Ngoại tuyến"}
             </span>
           </div>
           ${
             props.assistantName
               ? html`
                 <div class="settings-info-row">
-                  <span class="settings-info-row__label">Assistant</span>
+              <span class="settings-info-row__label">Trợ Lý</span>
                   <span class="settings-info-row__value">${props.assistantName}</span>
                 </div>
               `
@@ -791,10 +791,10 @@ export function renderConfig(props: ConfigProps) {
                       <button
                         class="config-mode-toggle__btn ${formMode === "form" ? "active" : ""}"
                         ?disabled=${props.schemaLoading || !props.schema}
-                        title=${formUnsafe ? "Form view can't safely edit some fields" : ""}
+                        title=${formUnsafe ? "Chế độ Form không thể chỉnh sửa an toàn một số trường" : ""}
                         @click=${() => props.onFormModeChange("form")}
                       >
-                        Form
+                        Biểu Mẫu
                       </button>
                       <button
                         class="config-mode-toggle__btn ${formMode === "raw" ? "active" : ""}"
@@ -812,13 +812,13 @@ export function renderConfig(props: ConfigProps) {
 	                  <span class="config-changes-badge"
 	                    >${
                         formMode === "raw"
-                          ? "Unsaved changes"
-                          : `${diff.length} unsaved change${diff.length !== 1 ? "s" : ""}`
+                          ? "Thay đổi chưa lưu"
+                          : `${diff.length} thay đổi chưa lưu`
                       }</span
 	                  >
 	                `
                 : html`
-                    <span class="config-status muted">No changes</span>
+                    <span class="config-status muted">Không có thay đổi</span>
                   `
             }
           </div>
@@ -828,10 +828,10 @@ export function renderConfig(props: ConfigProps) {
                 ? html`
                     <button
                       class="btn btn--sm"
-                      title=${props.configPath ? `Open ${props.configPath}` : "Open config file"}
+                      title=${props.configPath ? `Mở ${props.configPath}` : "Mở tệp cấu hình"}
                       @click=${props.onOpenFile}
                     >
-                      ${icons.fileText} Open
+                      ${icons.fileText} Mở
                     </button>
                   `
                 : nothing
@@ -841,28 +841,28 @@ export function renderConfig(props: ConfigProps) {
               ?disabled=${props.loading}
               @click=${props.onReload}
             >
-              ${props.loading ? "Loading…" : "Reload"}
+              ${props.loading ? "Đang tải…" : "Tải lại"}
             </button>
             <button
               class="btn btn--sm primary"
               ?disabled=${!canSave}
               @click=${props.onSave}
             >
-              ${props.saving ? "Saving…" : "Save"}
+              ${props.saving ? "Đang lưu…" : "Lưu"}
             </button>
             <button
               class="btn btn--sm"
               ?disabled=${!canApply}
               @click=${props.onApply}
             >
-              ${props.applying ? "Applying…" : "Apply"}
+              ${props.applying ? "Đang áp dụng…" : "Áp Dụng"}
             </button>
             <button
               class="btn btn--sm"
               ?disabled=${!canUpdate}
               @click=${props.onUpdate}
             >
-              ${props.updating ? "Updating…" : "Update"}
+              ${props.updating ? "Đang cập nhật…" : "Cập Nhật"}
             </button>
           </div>
         </div>
@@ -886,8 +886,8 @@ export function renderConfig(props: ConfigProps) {
                       <input
                         type="text"
                         class="config-search__input"
-                        placeholder="Search settings..."
-                        aria-label="Search settings"
+                        placeholder="Tìm kiếm cài đặt…"
+                        aria-label="Tìm kiếm cài đặt"
                         .value=${props.searchQuery}
                         @input=${(e: Event) =>
                           props.onSearchChange((e.target as HTMLInputElement).value)}
@@ -938,14 +938,14 @@ export function renderConfig(props: ConfigProps) {
                   <line x1="12" y1="9" x2="12" y2="13"></line>
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                <span class="config-validity-warning__text">Your configuration is invalid. Some settings may not work as expected.</span>
+                <span class="config-validity-warning__text">Cấu hình không hợp lệ. Một số cài đặt có thể không hoạt động như mong muốn.</span>
                 <button
                   class="btn btn--sm"
                   @click=${() => {
                     cvs.validityDismissed = true;
                     requestUpdate();
                   }}
-                >Don't remind again</button>
+                >Không nhắc lại</button>
               </div>
             `
             : nothing
