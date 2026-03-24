@@ -99,7 +99,7 @@ export function resolveChatModelSelectState(
     currentOverride,
     defaultModel,
     defaultDisplay,
-    defaultLabel: defaultModel ? `Default (${defaultDisplay})` : "Default model",
+    defaultLabel: defaultModel ? `Mặc định (${defaultDisplay})` : "Mô hình mặc định",
     options: buildChatModelOptions(state.chatModelCatalog ?? [], currentOverride, defaultModel),
   };
 }

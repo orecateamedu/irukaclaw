@@ -30,12 +30,12 @@ export const vi: TranslationMap = {
     agents: "Trợ lý",
     overview: "Tổng quan",
     channels: "Kênh giao tiếp",
-    instances: "Thiết bị Client",
+    instances: "Phiên Web",
     sessions: "Phiên hoạt động",
     usage: "Thống kê",
     cron: "Lịch trình",
     skills: "Kỹ năng (Skills)",
-    nodes: "Thiết bị kết nối",
+    nodes: "Thiết bị di động",
     chat: "Trò chuyện",
     config: "Cấu hình",
     communications: "Liên lạc",
@@ -306,27 +306,27 @@ export const vi: TranslationMap = {
       recent: "Coi lịch sử mới nhất",
       recentShort: "Phát mới cấn",
       sort: "Xếp thứ tự",
-      ascending: "Từ dưới lên trên",
-      descending: "Lộn từ cao xuống thấp",
+      ascending: "Tăng dần",
+      descending: "Giảm dần",
       clearSelection: "Hủy Lựa Chọn Session",
-      noRecent: "Giỏ trống, không nhận được Session mới chạy đây",
-      noneInRange: "Đoạn thời gian bị kẹt không có gì xảy ra",
+      noRecent: "Chưa có phiên nào",
+      noneInRange: "Không có phiên trong khoảng này",
       more: "Và {count} món đồ nữa",
-      selected: "Phiên mục lưu chọn lại để xử xem là ({count})",
+      selected: "Đã chọn ({count})",
       copy: "Sao Chép Text",
-      copyName: "Lấy luôn id thẻ vào clipboard",
+      copyName: "Sao chép tên phiên",
       limitReached:
         "Lưu ý hệ thống đang xuất chỉ 1,000 phiên đầu tiên. Thu nhỏ chu kỳ filter bên trên nếu muôn coi các thứ sâu hơn.",
     },
     details: {
-      noUsageData: "Bị ẩn trống thông tin",
+      noUsageData: "Không có dữ liệu sử dụng cho phiên này.",
       duration: "Thời lượng vòng xử lý",
       modelMix: "Các hệ Mô Hình luân chuyển",
-      filtered: "(Đã Lọc Filter Bị)",
-      close: "Đóng tab",
-      noTimeline: "Rỗng đoạn báo Time-line dữ",
-      noDataInRange: "Không nạp Data ngày vùng đó coi",
-      usageOverTime: "Luồng phân vùng Chi Tiết qua Thời gian",
+      filtered: "(đã lọc)",
+      close: "Đóng chi tiết",
+      noTimeline: "Không có dữ liệu timeline",
+      noDataInRange: "Không có dữ liệu trong khoảng này",
+      usageOverTime: "Sử dụng theo thời gian",
       reset: "Ban Lại Đi Từ Đầu Mốc",
       perTurn: "Chi Phí Từng Thao Tác",
       cumulative: "Cộng dồn toàn phiên",
@@ -335,12 +335,12 @@ export const vi: TranslationMap = {
       userToolInputTokens: "Tổng Hộp Token Người Khách mớm lệnh Tools Gọi API",
       tokensWrittenToCache: "Tokens Găm Ghi Phía Đệm Nháp",
       tokensReadFromCache: "Số lượng Nhặt Tiết Kiệm Nằm Trong Cache Hệ",
-      noContextData: "Kho Lưu Context Còn Rỗng Hơn Thường Không Dệt Gì Lại",
-      systemPromptBreakdown: "Thành phần Tiêu Thụ Trong Mồi Chức System Lệnh",
-      collapse: "Xếp Nhỏ Cất",
-      collapseAll: "Thu Gọn Khoảng Trống Rườm",
-      expandAll: "Triển Khai Cấp Đứt Giao Toàn Bì Đạt",
-      baseContextPerMessage: "Nền Trí Khóa Bao Bọc Nổi Quá Lượng Của Một Thoại Cấp",
+      noContextData: "Không có dữ liệu context",
+      systemPromptBreakdown: "Phân tích System Prompt",
+      collapse: "Thu gọn",
+      collapseAll: "Thu gọn tất cả",
+      expandAll: "Mở rộng tất cả",
+      baseContextPerMessage: "Context cơ bản mỗi tin nhắn",
       system: "File Lệnh (System Directive)",
       systemShort: "T.Liệu Chỉ Đạo (Sys)",
       skills: "Skill Kéo Ngoại",
@@ -349,13 +349,13 @@ export const vi: TranslationMap = {
       ofInput: "Phỏng trong Đầu Cấp Tới",
       of: "khoảng",
       timelineFiltered: "Giọt Thời Mốc Lọc Dập Không Lộ Trở Ngại",
-      conversation: "Cuộc Giao Đối Ngữ Ngôn Trò.",
-      noMessages: "Lịch sử Chat Này Trống Thông Xóa Bức Quái Nước",
+      conversation: "Cuộc hội thoại",
+      noMessages: "Không có tin nhắn",
       tool: "Mảnh Lệnh Gọi (API)",
       toolResult: "Nhữ Phản Động Quay Cổ Nắm Gắn Rõ Qua ",
       hasTools: "Mảng Dây Khởi Thần Tool Đốc Cơ ",
-      searchConversation: "Tra Dựng Quá Từ Trọng Đoạn Trong Vùng",
-      you: "Là Bạn Đó - User",
+      searchConversation: "Tìm trong hội thoại",
+      you: "Bạn",
       noMessagesMatch: "So Đọ Nhưng Cửa Trống Không Có Khớp Nghĩa Gì Quanh Tra Ngắn Này",
     },
     mosaic: {
@@ -366,39 +366,39 @@ export const vi: TranslationMap = {
         "Biểu Đồ Đánh Từ Bức Gối Timestamp Từ Đốc Sự. Nâng Hệ Tính Chuỗi Theo: Định Múi Giờ {zone}.",
       noTimelineData: "Mốc Thời Đo Trống Cốc .",
       dayOfWeek: "Ngày Theo Lịch Của Từng Chu Tuần",
-      midnight: "Cực Rạng Đêm H khuya",
-      fourAm: "Lúc 4 Giờ Sáng Trong Mai",
-      eightAm: "8 Quả Sáng Giờ Ngủ ",
-      noon: "Phừng Trưa",
-      fourPm: "4H Lụi Chiều Sụp Xố",
-      eightPm: "Quán Tối Rợp 8 Giờ ",
-      legend: "Biểu Đồ Mức Cấp: Từ Sự Thấp Dẫn Nhiệt Cực Căng Sang Báo Cao Trọng Đỉnh",
-      sun: "Chúa Nhật Cuối",
-      mon: "Là 2 Mần",
-      tue: "Thứ Thứ 3 Tiềm ",
-      wed: "Phi 4 Lược Dày ",
-      thu: "Tấu Lớp 5",
-      fri: "Sáu Sập Chiều Đây Đều",
-      sat: "Cuối Chạy Bảy Vất Báo Nghỉ Mệt Nữa",
+      midnight: "Nửa đêm",
+      fourAm: "4 giờ sáng",
+      eightAm: "8 giờ sáng",
+      noon: "Buổi trưa",
+      fourPm: "4 giờ chiều",
+      eightPm: "8 giờ tối",
+      legend: "Thấp → Nhiều tokens",
+      sun: "CN",
+      mon: "T2",
+      tue: "T3",
+      wed: "T4",
+      thu: "T5",
+      fri: "T6",
+      sat: "T7",
     },
   },
   login: {
-    subtitle: "Khu Vực Quản Trị Hệ - Gateway Dashboard Chức Quyền",
-    passwordPlaceholder: "Có Không Thể Bỏ Đi Tới Nhập ",
+    subtitle: "Trang Quản Trị Gateway",
+    passwordPlaceholder: "Không bắt buộc",
   },
   chat: {
-    disconnected: "Toang Rồi Máy Trạm Mất Gọi Tín Đường Truyền Hoạt Cổng Lên! Gateway Rớt.",
-    refreshTitle: "Tái Duyệt Nạp Hết Vào Vòng Luồng Dữ Hệ ",
-    thinkingToggle: "Hé Nâng Thần Nội Suy Tâm Khẩu Phục Phối Ngẫm Suy (Lý Hoạt Tư Duy Trợ Việc)",
+    disconnected: "Mất kết nối Gateway.",
+    refreshTitle: "Làm mới dữ liệu chat",
+    thinkingToggle: "Hiển/Ẩn luồng suy nghĩ của AI",
     toolCallsToggle:
       "Mở Ẩn Tắt Hiển Hiện Đèn Báo Tín Khẩu Thục Chạy Giao Sự Dòng Mã (Luồng Lệnh System Tool Đã Triệu)",
     focusToggle:
       "Đẩy Nút Tập Trung Xóa Các Nhiễu Lệ Thu Các Dòng Làm Rõ Các Box Chỉ Lại Cho Cuộc Đoạn Focus.",
-    hideCronSessions: "Che Bỏ Bớt Của Phiền Mạch Dòng Kéo Chèn Lệnh Đầy Màn",
-    showCronSessions: "Hoán Hiện Trúc Nổi Của Các Hệ Động Auto Phân Đi",
+    hideCronSessions: "Ẩn phiên Cron",
+    showCronSessions: "Hiện phiên Cron",
     showCronSessionsHidden:
       "Mở Cron Phân Auto Làm Thống Động Gộp Cho Chớp Lại Có Thêm Kêu Cạn Nước ({count} Khúc Cất Đã Đút Túi Ở Mạng Phân Gì Hiện Nắm Tại Đây)",
-    onboardingDisabled: "Bộ Setup Nguồn Vòng Ảo Hư Vô Khỏa Lấp.",
+    onboardingDisabled: "Tắt trong quá trình cài đặt",
   },
   languages: {
     en: "English",
@@ -411,108 +411,92 @@ export const vi: TranslationMap = {
   },
   cron: {
     summary: {
-      enabled: "Trạng thái Hoạt Động Cần Giao",
-      yes: "Mở Đè Cắn",
-      no: "Tắt Cổng Nằm Đoạn Ngủ Bẹp Nhé",
-      jobs: "Mục Việc Xếp Loại Nhiệm Auto",
-      nextWake: "Lịch Đứng Vực Canh Khi Tới Phát Wake Cờ Chuông Đón",
-      refreshing: "Chấn Tải Phóng Phục Tạp Load Lại Chút Nạp Mạng Vào....",
-      refresh: "Tưới Luân Thể Quay Nhanh",
+      enabled: "Đang hoạt động",
+      yes: "Có",
+      no: "Không",
+      jobs: "Tác vụ",
+      nextWake: "Lần chạy tiếp",
+      refreshing: "Đang tải...",
+      refresh: "Làm mới",
     },
     jobs: {
-      title: "Kho Điều Các Task Job Kích Auto Định Đạt Tại Sự",
-      subtitle: "Lưu Đọc Giờ Ghi Hệ Tàng Chứa Khắp Trong Tâm Trái Tim Gateway Đi Kéo Theo Chu Này.",
+      title: "Danh sách tác vụ",
+      subtitle: "Tất cả tác vụ định kỳ được lưu trong gateway.",
       shownOf:
         "Khúc Hiển Khởi Ngoi Bật Các Điểm Nhánh Được Ở Sát Từ Lịch Lọc Sàng: Khoe {shown} Được Từ Rút Chọn Ở Nấp Toàn Đợt Mã Là {total}",
-      searchJobs: "Soi Danh Tra Mục Khám Cân Sự Kê Mầm Từ Việc Gọi Nhanh Dò",
+      searchJobs: "Tìm tác vụ",
       searchPlaceholder:
         "Tìm Theo Khóa Dấu Việc Tính Đặt Hàng Gọi Cùng Gọi Hoặc Quét ID Thằng Agent",
-      enabled: "Được Tiếp Chứa Điện Run",
-      schedule: "Quy Củ Lệnh Bày Đặt Chế",
-      lastRun: "Khởi Nén Động Dấu Phát Thực Sự Kiện Cuối Rời Vừa Kí Hôm Bần Tiên Quá Ngắn Đi Trễ",
-      all: "Bất Kỳ Trọi Trút Cả Bộ Mọi Dạng Tồn Mất Khư ",
-      sort: "Thu Phân Thứ Đề Phép Sắp Xếp Trật",
-      nextRun: "Này Tới Vạch Nối Sự Lúc Giăng Gọi Cuối Tiếp Lúc Để Nghịch Mới Đây Của Job Đoan",
-      recentlyUpdated:
-        "Từ Lúc Bẻ Chạm Mới Vào Chỉnh Hay Cưa Có Phát Nếp Kéo Nó Hay Gọi Đây Thay Lại",
-      name: "Tên Danh",
-      direction: "Chuyển Pha Luồn Gọi Cho Tọa Theo Bọn Ngược",
-      ascending:
-        "Luân Xắp Lùi Quẻ Tiễn Cỏ Thấy Có Ngược Lên Lấy Đầu Cắt Thu Cuối Gọi Đây Có Thụt Chắc ",
-      descending:
-        "Quật Tới Sạt Lối Chỉ Trọc Cú Phía Kéo Khấu Đè Cho Sự Đo Góc Thăm Cấp Lúc Khớp Xong Nó Từ ",
-      reset: "Xóa Thiết Chỉnh Trắng",
-      noMatching: "Lưới Chài Hụt Rỗng : Không Job Nhiệm Nào Vướng Rụng Có.",
-      loading: "Mang Nước Nạp Quát Khảm Nạp Tái Đợi Nào Ngang..... Cho Bơm Load Nhàng .",
+      enabled: "Đang bật",
+      schedule: "Lịch trình",
+      lastRun: "Lần chạy cuối",
+      all: "Tất cả",
+      sort: "Sắp xếp",
+      nextRun: "Lần chạy tiếp",
+      recentlyUpdated: "Cập nhật gần đây",
+      name: "Tên",
+      direction: "Chiều",
+      ascending: "Tăng dần",
+      descending: "Giảm dần",
+      reset: "Đặt lại",
+      noMatching: "Không có tác vụ nào phù hợp.",
+      loading: "Đang tải...",
       loadMore:
         "Nhúng Đều Kéo Gọi Moi  Thêm Lên Đo Lục Cũ Cũ Bứt Hơn Đích Chốt Tí Đo Lấy Phút Trước .",
     },
     runs: {
-      title: "Lược Báo Lưu Của Hành Tung Tái Luẩn Quẩn Tại",
-      subtitleAll:
-        "Đây Mọi Tác Chạy Tuôn Hoằng Nhét Rụng Nổi Bề Đủ Nghé Tại Nhiệm. Dữ Kiện Các Nó Job Đụng",
+      title: "Lịch sử chạy",
+      subtitleAll: "Các lần chạy gần đây trên mọi tác vụ.",
       subtitleJob:
         "Còn Đây Ghi Chứng  Thuộc Quyền Nắm Gọi Các Nếp Cặp Lệnh Job Trị Riêng Của : {title}.",
-      scope: "Khung Quét",
-      allJobs: "Chắn Quản Tất",
-      selectedJob: "Task Riêng Lấy Đặt Chuẩn Định",
-      searchRuns: "Tìm Dò Các Kỳ Dấu Ra Run Trại Lúc Sự Chạy Trải Chống Kì Cho Tầng Dài Dấu",
+      scope: "Phạm vi",
+      allJobs: "Tất cả tác vụ",
+      selectedJob: "Tác vụ đang chọn",
+      searchRuns: "Tìm lần chạy",
       searchPlaceholder:
         "Bố Nhấp Tóm Bản Đốc Đoán  Ngắn Hay  Lùng Hoặc Check Phía Gì Thằng Cớ Tố Error Vào Không Nằm Việc Kẻ Cản Vắng.",
-      newestFirst: "Ra Đời Vừa Được Dạo Dụ Sấn Chọn  Lúc Mới Giờ Trẻ Rút Đầu Chữ .",
-      oldestFirst: "Phần Lịch Vào Thấy Già Trễ Móc Đào Sâu Trình Mở Cho Đầu Từ Xa",
-      status: "Thế Cờ Hiện Lập Nấc",
-      delivery: "Dạng Bao Giao Chứ Khoán Đơn Bưu Báo Có Ở Sổ Cho Đưa Tin  Làm.",
-      clear: "Kế Trúc Quét Mọi Chọn Gốc Lúc Dở Quăng Cuộc Lỡ Tát Từ Kì Cọc Nốt .",
-      allStatuses: "Quá Khoái Thải Tình Gắn Mạch Tứ Cục Báo Mấy Vạch Ở Gắn Đỉnh Khí Sức . ",
-      allDelivery:
-        "Phóng Ra Khứ Tuyến Trọn Dấu Lịch Cả Mọi Cho Nhóm Vị Đích Rút Hấp Hồi Phương Các Có Rẽ  .",
-      selectJobHint:
-        "Bạn Gõ Lấy Mục Xác Xin Này , Coi Hãy Chấp Quyết Nhấp Đặt Mạch Chọn Cột 1 Bác Job Cho Từ Sự Tại Nó Tục Soi Ở Đo Lấy Trong Cuộc Xem Run Tục Kéo Lịch Nhào Mốc Gọi .",
-      noMatching:
-        "Rà Quặng Bể Tìm Chẳng Khứa Run Dạng Gì Sát Sự Do Sai Hẳn Nhịp Trọng Lưới Góc Giữa Ở Sự Thấy Lạc. Nên Xé Toạc Rải Cuộc Thiếu Tìm Chưa Vào.  ",
+      newestFirst: "Mới nhất trước",
+      oldestFirst: "Cũ nhất trước",
+      status: "Trạng thái",
+      delivery: "Giao kết quả",
+      clear: "Xóa",
+      allStatuses: "Tất cả trạng thái",
+      allDelivery: "Tất cả trạng thái giao",
+      selectJobHint: "Chọn một tác vụ để xem lịch sử chạy.",
+      noMatching: "Không tìm thấy lần chạy nào.",
       loadMore:
         "Vạch Rộng Tìm Dữ Dải Xưa Tiếp Nào, Gọi Nhét Thêm Mốc Khúc Hồi Nào Đi Xuống Cất Tới .",
-      runStatusOk: "Óng Ả Thấy Run Giòn Có Ổn Rồi Nhẹ Run Run Cái OK Lúc Cứa",
-      runStatusError:
-        "Phế Thật Xập Sát Hố Vào Tàng Vướng Đấu Mắc Ngang Do Lỗi Rồi Cửa Đội Đổ Đi Mạch Đeo Đứt Quãng Lệnh Liệt Error .",
-      runStatusSkipped:
-        "Trượt Bức Chẳng Bị Vướng Bụi Gì Lướt Bay Thả Khước Khí Skip Liện Xước Sất ",
-      runStatusUnknown:
-        "Là Biệt Có Trệ Xứ Thất Thần Ẩn Ở Mác Lẩn Ngoại Định Lực Quái Gỡ Á . (Thấy Bí Bần Unknown Bờ Á Dị Cảnh Chưa Nghĩa Rõ Vang Thôi Rà  ) ",
-      deliveryDelivered: "Cái Kiện Phải Trao Sổ Đương Chốt Khấu Ản Thông Xuôi Thuận OK Đạt Dữ",
-      deliveryNotDelivered:
-        "Kiện Thư Rút Bị Liệng Chặt Tại Trống Bỏ Giấc Trục Nghẹt Khúc Không Tại Rơi Làm",
-      deliveryUnknown: "Tịch Vị Đoạt Dấu Quãng Chờ Từ Chưa Lúc Mơ Ở Bụ Cái Định Không Quả",
-      deliveryNotRequested:
-        "Nhập Kém Rơi Dữ Chưa Không Giao Tạc Bị Nào Từ Cổ Ra Đơn Tại Đồ. (Miễn Đánh Thư Việc Đẩy Bút Gửi Đích Giao Quả Này. Cáo Báo NotRequested Đi Ở Chưa Gì. )",
+      runStatusOk: "Thành công",
+      runStatusError: "Lỗi",
+      runStatusSkipped: "Bỏ qua",
+      runStatusUnknown: "Không xác định",
+      deliveryDelivered: "Đã gửi",
+      deliveryNotDelivered: "Chưa gửi được",
+      deliveryUnknown: "Không xác định",
+      deliveryNotRequested: "Không yêu cầu gửi",
     },
     form: {
-      editJob: "Thiết Đặt Hiệu Chỉnh Vận Task",
-      newJob: "Tạo Việc Định Kỳ Cron Job Khởi Chạy",
+      editJob: "Chỉnh sửa tác vụ",
+      newJob: "Tạo tác vụ mới",
       updateSubtitle:
         "Sửa Cứu Tái Chỉnh Luồng Cho Chứa Giảng Update Cron Có Cho Việc Quả Giấc Thư .",
       createSubtitle:
         "Dựng Bộ Hệ Đạo Chờ Wake Chỉnh Wake Hoặc Tác Auto Hẹn Agent Mềm Cú Chỉ Gọn Lặp Cho Công Các Gánh Phát Quãng Làm Níu Vào Giờ Tại Chỉnh .",
       required: "Required",
       requiredSr: "required",
-      basics: "Bản Phân Cố Điểm Định Có Cơ Yếu",
-      basicsSub:
-        "Hãy Gán Tên Đọc Chọn Việc Trí Chỉ Định Kêu Quỷ Hướng Thợ Đâu Đi Đóng Cửa Gọi Vừa Ráp Vào Của Có Sát ",
-      fieldName: "Danh Tính Khóa Nhận Việc (Name)",
-      description: "Hệ Thích Chỉ Diễn Nêu",
-      agentId: "Mã Hệ Lệnh Agent Tại Nơi Nút",
+      basics: "Thông tin cơ bản",
+      basicsSub: "Đặt tên, chọn trợ lý và bật/tắt tác vụ.",
+      fieldName: "Tên",
+      description: "Mô tả",
+      agentId: "Agent ID",
       namePlaceholder:
         "Lát Chọn Sáng Đọc Dịch Ví Của Nó Đi , Brief Buổi Sáng , Kiểm Thư Chiều Sớ Gọi...",
       descriptionPlaceholder:
         "Cần Đoán Khéo Mô Tinh Nhúng Thêm Ngữ Cho Gọn , Việc Ráp Nhạc Lệnh Context Nghĩ Đích Cuộc .",
-      agentPlaceholder:
-        "Chấm Nhỏ Là , Nháp Góc Là Chọn main Hay Đoán Gọi Nhấp Chọn Tại Sân OPS Đi . ",
-      agentHelp:
-        "Kích Hoạt Cuốc Nhập Đục Thì Đi Xoẹt Rọi Nó Đồ Cuộc List Những Nguồn Mà Nó Chạy Tụ Nguồn Mà Nhanh Để Nó Ra Hay Đi Còn Cho Hết ID Agent Khác Mặc Cậu Thú Tại Duyên Cỡ Không.",
+      agentPlaceholder: "main hoặc ops",
+      agentHelp: "Gõ để chọn agent có sẵn, hoặc nhập ID tuỳ chỉnh.",
       schedule: "Lệnh Kêu Ngày Đấu Vào Vạch Định Tại Giờ",
-      scheduleSub:
-        "Lúc Mà Việc Nhào Quãng Thời Định Này Giấc Ở Đứng Đây Tại Job Sự Can Canh Thức Nhau.  ",
+      scheduleSub: "Xác định thời điểm tác vụ sẽ chạy.",
       every: "Dãn Cách Đều Vòng Cứ Bấy Lâu",
       at: "Quy Cào Giờ Đặt Vào Ngay Mốc ",
       cronOption: "Lịch Cron Cơ Trạch Cửa",
@@ -525,37 +509,30 @@ export const vi: TranslationMap = {
       expressionPlaceholder:
         "Kiểu Như Ghi Tọa Nó Thế Này Thụt Cho Gấp 0 7 * * * Chẳng Ở Nào Thêm Vào  Đều Đi ...",
       everyAmountPlaceholder: "VD là Cứa Để Cho Đoán Cái Có Đi Cho 30 Dòng ...",
-      timezoneOptional: "Chọn Luôn TimeZone Múi Thời Địa (Không Nhất Chấp Thể Khi)",
+      timezoneOptional: "Múi giờ (không bắt buộc)",
       timezonePlaceholder: "Nhấn Chuẩn Tại Bóc Chẳng  America/Los_Angeles Gì Đấy ... Nới",
-      timezoneHelp:
-        "Mở Chạy Ở Cỡ Pick Giờ Cuộc Mà Chắc Nặng Góp Nó Đi Định Chờ Khách Nghĩa IANA Mới Tới Gọi Nấc Phân Tại Không Vớ Phép .",
+      timezoneHelp: "Chọn múi giờ phổ biến hoặc nhập IANA timezone bất kỳ.",
       jitterHelp:
         "Mốc Gián Dạt Sự Chệch Trễ Tại Tán (Jitter) Lệ Hướng Mạch Chống Quai Quắt Xả Sự Nghệ Thấy Chọn Vùng Nhấn : Vượt Từ Can Đụng Chạm Khúc -> Thả Cho Stagger Giật Dấu Trãi Kênh Tại Chỗ ... Thư Các Tại Quáng Rão Đồng Bọt Bão Tụ Tát Gọi Quá Cho Đỉnh Tim Hỏng Nó Sức Đánh.",
-      execution: "Đoạn Cuốn Can Thao Cố Thực Thi (Lưới Cuộc Kéo Lục)",
-      executionSub:
-        "Dậy Lúc Đoạt Nối , Gỡ Cuốc Tháo Nới Khấu Có Mà Chết Lực Gọi Hàng Nó Ở Làm Gì Bỏ Nó Cho Nhiệm Trong Khung Can Can Lúc Thảo Lực Cho Định .",
+      execution: "Cài đặt thực thi",
+      executionSub: "Chọn thời điểm kích hoạt và nội dung tác vụ.",
       session: "Nhánh Xá Quyên Độc Gắn Buộc Nhau Vùng (Session Quầng Sàn) Điệp Cho Cân Mở :",
       main: "Gọi Sự Nhọc Vào Thằng Gốc Phiên Sóng Tuyến Nền Chính Tại Nào Nhất Cuộc Thẳng Xài  Nước Lớn Chung . ",
       isolated:
         "Gạt Khắc Dựng Cuốc Đi Phòng Khu Tách Cô Ly Cục Cán Nó Trong Session Cô Phòng Nằm Chấp",
       sessionHelp:
         "Nếu Để Ở Sự Tại Hệ Có Tại Ở Chọn Dựng Lắp Thẳng Chung Gọi Vảo Cột Góc Đặt Cho Dấu Hệ Main Cổ Nhảy. Trải Ở Lô Báo Đi Giao Riêng Nó Để Tại Vực System Đứng Cứ Việc Đơn Cõi Thảo Khác Có Vào Không Để Tại Nhức Nhắn Isolated Cô Bác Ly Cô . Tự Ở Bẻ Góp Máu Mọi Lẽ ",
-      wakeMode: "Bộ Kiều Có Đục Tâm Can ( Wake Đề Mode Gây Thức Tích Phép Khơi Nó Đứt Cửa) ",
+      wakeMode: "Chế độ kích hoạt",
       now: "Phất Bút Lệnh Đột Nổ Nó Kích Ầm Liền ( Chặn Gọi NOW Lôi Chui) ",
       nextHeartbeat:
         "Để Nới Cho Buộc Góc Sóng Nó Trôi Cho Kì Mới Heartbeat Thét Tim Sát Lới Có Chu Khúc Sự Trôi Tại . ( Nó Gắn Trọng Quãng Ké Giảm Máy Ngủ Giảm Dựng ) ",
-      wakeModeHelp:
-        "NOW Chỉ Làm Cái Gõ Khúc Chạm Cho Khúc  Thỏa Bứt Sự Liền Tự Giác . Còn Chọn Khắc Đi Trờ Cái Quãng Sau Thổi Nới Next Gọi Đi Sự Khoảng Khảo Xéo Phép Tâm Chờ Thư Sự Cuốc Cái Tới Ráp Máy Thét Gì Bật Chu Đi Heartbeat Kể Gọi Hữu Tiên Can Lọc .",
+      wakeModeHelp: "Now kích hoạt ngay. Next heartbeat chờ chu kỳ tiếp theo.",
       payloadKind:
         "Bổ Nét Truyền Thân Nội Thực Làm Cái Chức Quăng Nghề Nêu Gọi Tại Nhịp Sẽ Vực Của Quãng Có Ném Tại Khấu Gọi  Gì Kìa ? Đi Ở Sứ :",
-      systemEvent:
-        "Chỉ Ném Gắn Báo Câu Nhắn Vô Phiên Chính Có System Thông Message Cửa Ở Event Góc Lên Rão Mọi Này.  ",
-      agentTurn:
-        "Kéo Ép Để Dắt Cuốc Nó Thằng Cắm Góc ( Cục Tại Giữa Cô Gọi Turn Liệt Phiên Ở Tách Để Xử ) Dịch Ly Bẻ Làm",
-      systemEventHelp:
-        "Điều Trích Đoạn Chuyến Ngắn Chỉ Viết Gửi Hở Góc Tại Trục Sự Của Timeline Phủ Lấy Mạch Đi Rộng Thảng ( Nó Rẻ Ngắn Tại Cái Mồi Lệnh Mới Khác Cho Bóp Chỉ Khi Gọi Note Khuyên Cuống Để Sứ Phụ Đắc Góc Ở Nữa Góc Can ) .",
-      agentTurnHelp:
-        "Đốc Phóng Tạo Đường Xé Một Nhiệm  Đi Tại Dành Phiên Liện Hộc Nó Của Nắm Cho Hắn  Session Một Đo Mở Khu Việc Kín Tác Cách Dựng Tại Trưởng Tại Từ Chức Có Yêu Riêng Mồ Cái Viết Nghĩa Yêu Cho  Cửa Ở Thắng Lệnh Ở Đầu Nữa Phía Trước Tại Kẻ Prompt Lần Kê .",
+      systemEvent: "Gửi tin nhắn tới timeline chính",
+      agentTurn: "Chạy tác vụ AI (phiên riêng)",
+      systemEventHelp: "Gửi văn bản vào timeline gateway (phù hợp cho nhắc nhở/kích hoạt).",
+      agentTurnHelp: "Bắt đầu một lượt agent trong phiên riêng với prompt của bạn.",
       timeoutSeconds:
         "Ngạch Lùi Sóng Cắn Cụt Chót Hạt Bị Để Cúp Khi Lỡ Cho Sự Kẹt ( Đốt Thời Dắt Khóa Tính Giây Timeout )  ",
       timeoutPlaceholder:
@@ -566,48 +543,38 @@ export const vi: TranslationMap = {
         "Gắn Lịch Trục Góc Ở Đính Phủ Để Thức Main Text Timeline Thông Đo System Nhú Có Phóng Nép :",
       assistantTaskPrompt:
         "Bơm Đốc Đứng Chỉ Phân Gọi Tại Yếu Mồi Prompt Cho Task Trợ Lý: ( Lệnh Xin Phải Nghe Đè Yêu Dã Để Nhiệm Chế)",
-      deliverySection:
-        "Lọc Dõi Truy Kiện Nút Kết Vị Điểm Nạp Trả Khai Trục Chọn Giao Địch Hồi Trực Tin Ở",
-      deliverySub:
-        "Tạo Đạo Hướng Kết Định Lấy Quyết Báo Vọng Khí Đầu Lúc Giao Mạch Ra Thuận Summary Cuối Chọn Đi Đích Thu.",
+      deliverySection: "Giao kết quả",
+      deliverySub: "Chọn nơi nhận tóm tắt kết quả.",
       resultDelivery:
         "Cách Rẽ Chọn Result Delivery Xuất Kho (Dẫn Tội Giao Khách Níu Khoảng Đi Giao Kiết Data Nghĩa)",
-      announceDefault:
-        "Gọi Đốc Làng In Dội Hịch Kênh Báo Ra Giọng Náo Gắn Lòi Đo Kịt Chú Kèm Két Kết Nghẹt Sự In Cổ Nói Loa ( Là System Bình Chế Thuận - Default Tại Dọc Hệ)",
-      webhookPost: "Châm Ngòi Dấp Phương Webhook POST Đẩy Lọt Thông Ra Hệ Data  .",
-      noneInternal:
-        "Nội Cử Thông Im Cấm Kẽo Tại Cửa Bị Vọc Chỉ Ở Trong Của System Giữ Nhàu Dẹp Lúc Biệt Ảo Kín (Tàng Không Bổ Tín) .",
-      deliveryHelp:
-        "Ngả Đi Ở Kênh Khô Rõ Ráp Thông Kênh Hô Báo Xuất Lên Tại Cho Mạch Phụ Cuối Nghe Lúc Kết Kém Announce . Cái Kế Liện Chọn Góc Đóng Cho Tịt Tại Mảng Ngách Nhá None In Thường Tụt Âm Nó Tại Làm Dịch Ngót Quá Thận Mái Hết In Giữ Kìm Lại Việc Bổ Cửa Có System Mạch Cả Mép .",
+      announceDefault: "Thông báo tóm tắt (mặc định)",
+      webhookPost: "Webhook POST",
+      noneInternal: "Không gửi (nội bộ)",
+      deliveryHelp: "Announce đăng tóm tắt lên chat. None giữ nội bộ hệ thống.",
       webhookUrl:
         "Khúc Đầu Ống Máng Tại Ổ Webhook Của Khách Giấy Cổng : Cái Chỉ Đạo Quãng Nhớ Đo URL Sẽ Cứ Gửi Đẩy Lệnh Kết Cho Lần Có Nào  ",
       channel: "Kênh Cuộn Cho Đón Nó Ở Góc Đâu Cuối Ráp Gọi Tin ?",
       webhookPlaceholder:
         "Gói Quả POST Sự Sát Khứ Trôi Viết Vất Đi Tại , Ví Tựa Mốc Lẹ Chuẩn Tọa : https://example.com/api/webhooks/cron",
-      channelHelp:
-        "Cứng Góp Đóng Luồng Để Lên In Loa Chọn Hẳn Kênh Channel Nào Khách Đã Máng Hook Khấu Kéo Với Ráp Hệ Cho Data Nện Tín Dội Ra Cũ .",
+      channelHelp: "Chọn kênh nhận tóm tắt kết quả.",
       webhookHelp:
         "Đốc Bó Trữ Khóa Kéo  Luồng Cho Tóm Cột Các Chú Ngắn Sự Đất Đỉnh Tại Báo Ráp Gửi Rụng Chữ Vọng Quả Ở Lên Cuống Đường Trưởng Ngõ URL Nó Để Của Endpoint POST Qua Ở Phương Kiết .",
       to: "Mũi Tiền Kéo Giao Rẽ Xỉa Chỉ Kẻ Ở Nhấc Đích To (ID) ",
       toPlaceholder:
         "Ví Nó Khách Khắc ID Quãng Lúc Trọng +1555 Nho Khung Cõi Bức Tên Gì Hay Điện Đính Lấp Sóng Chat ... Này Vọng Tọa Góc Cỏ Lãnh Định .",
-      toHelp:
-        "Đích Đo Thụt Trị Tại Có Lượt Sự Không Mặc Đi Hệ Của Mà Sự Trải Trong Lên Bức Ở Lắm Cuốc Bọc Quãng Nghĩa Lật Chỉ Ở Chat ID Nó Đo Nhá Dịch Sóng Lãnh Tức Phone Đo Vọng Lọc Cấp Phân Nhấc Lẻ Đập Lên User ID Nữa Bị Ở Gấp Cái Chọn Bật Móc Option. Sự Bứt Nhọn Phủ (Cho Phù Trị Giới Nữa Hơi Hẹp Hẹp ).",
+      toHelp: "Người nhận tuỳ chọn (chat id, số điện thoại, hoặc user id).",
       advanced: "Đội Vát Nâng Thêm Thao Dựng Cước Gài Móc Ngách Ở Advanced Bọc Cực Rành Lấp Khó .",
-      advancedHelp:
-        "Tạo Lấp Ở Sức Tụ Giới Mở Ràng Cho Mép Rối Dựa Lúc  Hạn Lấp Cho Đi Sổ Đọt Thụt Thời Đừng Đẩy Góc Ép Bóp Jitter Lên Bọt Nâng Cuộc Tréo Có Chống Ở Mốc Cuối Tại Khúc Override Lách Rớt Biên Nắm Móc Can Định Sự Cho Lỗ Vành Canh Model Tại Lối Không Có Có Gọi Điều Có .",
+      advancedHelp: "Cài đặt nâng cao: jitter, override lịch trình và model.",
       deleteAfterRun:
         "Dẹp Sạch Khấu Nhổ Cốt Hết Có Bỏ Phứt Rác Rưởi Nó Quãng Ở Lúc Vong Khi Việc Run Tại Trật Nó Vừa Làm Khớp Giết Result Thì Quẳng Rõ   Delete Xóa",
       deleteAfterRunHelp:
         "Móc Tụ Dựng Chỉ Rất Đi Tại Chọn Lệnh Gắn Reminder Rất Nóng Giật Phát Gắn Xong Cái Thì Rũ Gọi Tụ Rụng Luẩn Kéo Dẹp Hệ Dọn Cực Quãng Nó Ở Làm Cỏ Khỏi Tác Bị Lưu Chống Rác Góp Quãng Quỷ Hót Cặn Chỗ Cứng Dịp Sự Dứt .",
       clearAgentOverride:
         "Xóa Rút Bẻ Gấp Agent Bị Mép Ở Tại Nhíu Nó Ép Chặn (Override) Chắc Có  Gác Chân Lấy Về Vượt Quyền .",
-      clearAgentHelp:
-        "Mệnh Chặn Đụt Xé Trói Cứng Không Xoẹt Góc Nơi Sự Xài Tại Agent Rời Đi . Nên Để Dập Quãng Có Bỏ Chắp Vượt Nhường Lịch Đi Buộc Nó Báo Để Gốc Phụ Vào Có Gateway Rụng Lúc Default Agent Dịch Sự Mấp Không Cả Cuốn Góc Phép Đi Hệ Lấy Xài Nhánh Cái Assistant Nó Lôi Vô .",
+      clearAgentHelp: "Xoá ghi đè, để tác vụ dùng agent mặc định của gateway.",
       exactTiming:
         "Cứng Nghẹt Sát Sảy Đồng Hồ Exact (Kìm Giới Timing Không Vượt Không Giết Chấp Quãng Móp Sự Giật Nhả Trễ Có Đổ Phân Đừng Thác Gì Jitter Trừ Mấp Dành )",
-      exactTimingHelp:
-        "Bấm Đanh Tróc Chui Đúng Tại Ống Đụt Mạch Sát Cho Cương Thời Biên Lịch Cron Cắn Nhịp Mà Không Vọt Bùng Dịch Khúc Thủng Gì Cái Xả Loạn Kéo Cước Bức Góc Do Dứt Có Một Có Biệt Ở Có Sự Biên Kẹp Móp Trong Rừng Quãng Rạp Khung Gấp Dày. Thả Không Cho Nẩy Bịp Khoảng Trễ Tại Nghịch Cuống Biên Có Cho Server Lúc Đi Xoay Lịch .",
+      exactTimingHelp: "Chạy đúng theo lịch cron, không có độ trễ ngẫu nhiên.",
       staggerWindow:
         "Quãng Ngấp Hạn Từ Gốc Khúc Độ Trọng Trễ Gục Cho Ở Làm Giao Mở Viền  (Stagger Window) ",
       staggerUnit:
@@ -617,46 +584,37 @@ export const vi: TranslationMap = {
       model: "Xoay Kéo Phân Mô Bố Vọt Thay Model Lấp Vào Mới Góc : Đi Chớ ?",
       modelPlaceholder:
         "Đổi Típ Chọn Vùng Kép Giới Tọa Nhúopenai/gpt-5.2 Kìa Của Không Thử Góc Lại Ở Vung Sóng Tại?",
-      modelHelp:
-        "Bắt Móc Nhíu Đo Trọc Bóc Gõ Mở Vào Tab Cắp Của Nhỏ Góc Thì Để Gợi  Nhớ Tụt Thả Góc Chạm Nó Của List Đọc Đi Tại Mép Model Gọi Đã Gốc Khảm Mà Trong Biết Mép, Hoặc Gõ Tại Ráp Cuộc Cho Liền Nó Đấm Tựa Gọi Custom Nếu Đi Vào .",
+      modelHelp: "Gõ để chọn model có sẵn, hoặc nhập tên tuỳ chỉnh.",
       thinking:
         "Mớm Cục Đè Suy Cho Mức Động Óc Óc Tại (Thinking Khó Level Khúc Vắt Gấp Cáp Lấy Tĩnh Tâm ) ",
       thinkingPlaceholder: "Ở Ngấp Nhẹ Thủng Khứa Nghênh Trọclow Cho Mồm Xéo Nó Ở Gọn.",
-      thinkingHelp:
-        "Độ Nấp Bó Chọn Vực Suy Chọn Bớt Dụng Rà Có Trò Lúc Nghĩ Độ Nhấp Ở Vực Suy Thức Để Cứ Báo Provider Nó Buộc Không Buộc Không Cấp Hạn Nhóm Tầm Gài Mép Dốc Thấy Nước Mẹo Gắn 1 Lại Ở Dịch Từ Vào Nó.",
+      thinkingHelp: "Dùng mức gợi ý hoặc nhập giá trị riêng của provider.",
       bestEffortDelivery: "Thử Tức Hết Ráng Gượng Độ (Best Effort Delivery Cho Giao Mạch Nữa Giết)",
-      bestEffortHelp:
-        "Ép Kiệt Ráng Không Do Từ Sự Fail Delivery Có Cái Ống Gọi Mạng Cho Job Mạng Giật  Kênh Ở Bất Nếu Thằng Cổ Cựa Gãy Đoạn Hỏng Đít Cấu Báo Bưu Delivery Tại Cũng Tự Nó Dứt Cắn Không Cứ Sự Tại Không Ở Thất Ép Báo Kìa Cho Failed Sự Nghé Chốt Quãng Ở Giết Lệnh . Sự Cứ Để Góc Mở Cho Giảm Run Bình An Qua Tạm Ngắt Mà Gọi Khỏi Nhớ .",
+      bestEffortHelp: "Không thất bại job nếu việc gửi kết quả bị lỗi.",
       cantAddYet: "Ấy Lại Bấn  Gấp Lỗi Tại Chưa Tại Mà Chờ Đã Lúc Thêm Xong. Có Tại Cửa",
-      fillRequired:
-        "Mời Người Trở Tới Chuyển Đi Ô Góc Dùng Những Đã Nháy Vòng Khuyên Nó Đóng Bịch Điền Dủ Sự Yếu Nết Thỏa Phép Cho Button Trích Trở Có Enable Chứ Để Nút Tại .",
+      fillRequired: "Điền đủ các trường bắt buộc để kích hoạt nút Lưu.",
       fixFields:
         "Chạm Cần Góc Dịch Khúc {count} Trục Lũng Box Field Phải Báo Đi Để Dụng Vá Khúc Nét Không Viết Sự Lỗi Lúc Dịch Cựa Mới Mở Cảng Để Cho Xử Chọn Xong Ngõ Can Sủa Ở.",
       fixFieldsPlural:
         "Chừng Gấp Tích Bóp Móc Cho Dọn Tới Cú Lấp {count} Đo Khúc Tại Tới Gọi Góc Lúc Chưa Quán Hết Trữ Viết Sự Rụng Nết Bị Đoạn Rỗng Tộc Đi Sửa Để Không Lúc Mới Thông Gọi Cho Ráp Nhớ Ở Tiếp Phép Tại Ráp Cân Vá Đoạn Nứt Không Cấp Vùng .",
-      saving:
-        "Khắc Dịch Phím Lên Đang Ghết Gói Ghi Sự Lưu Mạch Cho Trở Vòng Lên . Đang Lắp Tịch Trồi. Xin Gấp Trục Cho Nháy Kém Chở Có....",
+      saving: "Đang lưu...",
       saveChanges:
         "Đúp Xếp Lại Ấn Dịch Cú Mịn Cước Góc Cứ Chốt Giấu Lên Sự Tại Xong Đóng Tại Save Nhẹ Lưu Việc Changes Định Lệnh Khóa Góc  Đã Thay Bịch Sự Dời Thay. Ở",
-      addJob:
-        "Chọn Lập Đo Phóng Ở Có Job Sự Bức Điểm Nép Task Rơi Điểm Nòng Mào Đầu Nút Của Cớ Dành Trọng Quả Add Góc Đỉnh Tác Tạo Mới Dữ Nó Ráp  Vào Nữa Tụ Lên .",
+      addJob: "Thêm tác vụ",
       cancel:
         "Hủy Quăng Dút Đo Đoạt Nhịp Không Quãng Rút Sự Ráp Nó Có Cuộc Góc Móc Tách Ở Xé Xóa Giấy Đi Kịch Tại Cuộc Ngắt Không Góc Từ Kẹt Gọi Là Lùi Chân Chớ Do. ",
     },
     jobList: {
-      allJobs: "Tất Có Trọi Xếp Hệ Job Cõi Xổng Tại Nhanh",
-      selectJob: "(Vịn Thấy Giữ Cuối Chọn 1 Cho Task)",
+      allJobs: "Tất cả tác vụ",
+      selectJob: "(Chọn một tác vụ)",
       enabled: "bật mở rồi",
-      disabled: "lụi tắt phẹt",
-      edit: "Chuốt Dịch Ráp Đi Edit Dời Ngòi",
-      clone:
-        "Tuyển Nhân  Bản Ở Sát Duplicate Lục Cuốc Thêm Có Góc Góp Copy 1 Cháu Cho Trái Tới Lúc Kéo Khởi Dịch Khác Tên Tí Nó",
-      disable:
-        "Ngưng Sụp Phát Tắt Cứ Sập Có Cho Nằm Liệt Giác Đóng Đi Liệt Việc (Disable Kìm Hãm Ngủ Đông Tít Ở Động Sát Đống )",
-      enable:
-        "Dội Gọi Rần Tỉnh Kích Ngược Đảo Có Tái Phát Dựng Tại Ngã Bật Đón Cắm Enable Tắt Rục Hệ Tự Cho Khớp Nhạc .",
+      disabled: "đã tắt",
+      edit: "Chỉnh sửa",
+      clone: "Nhân bản",
+      disable: "Tắt",
+      enable: "Bật",
       run: "Gõ Tiên Tại Chạy Vô Ấn Run Cứa Nó Phát Quăng Cuốc Ném Nhạy Làm Ép Việc Chớ Tự Rờ Qua Cải Gọi Sự Quỷ . !",
-      history: "Bộ Sự Quãng Biên Cục Nơi History Móc Kí Nằm Đọc Sử Vị Vòng Qua Trữ .",
+      history: "Lịch sử",
       remove:
         "Thiêu Gọi Tán Cắt Liệng Cái Cán Sổ Đi Xóa Quật Ở Cho Gọt Ngắt Remove Khỏi Vòng Góc Mất Thổ .",
     },
@@ -667,28 +625,25 @@ export const vi: TranslationMap = {
         "Vọng Đỉnh Lệnh Tí  Prompt Nặc Cuốc Prompt Chỉ Agent Xoay Nhấn Đầu Đòi Giới Hỏi Nhắn Ép Vụ Ngắn Khẩu Ở  Cặp Cửa Nấu Động Gọi Vào Dục Thắng Ai Đây Kéo Thấy Giới Assistant Đọc Có Nghe Ở Nhớ:",
       delivery:
         "Độ Nặc Mạch Rẽ Cho Đi Quả Tống Quả Gửi Nắn (Tại Khâu Chọn Delivery  Chuyển Hồi Kéo Vạch  Báo Góc Phát Sự):",
-      agent:
-        "Quyền Quỷ Agent Góc Sai Viết Đích Ầm Phái Gọi Thằng Gì Để Có Gọi Ở Sự Chỉ Tại Dạo Tên Sự Ở: ",
+      agent: "Agent",
     },
     jobState: {
       status:
         "Tư Sắc Cuộc Gián Đi Tư Thái Định Nét Dạng Tại Hiện Mạng Tật Cho Vọng Sự Khúc Status Tại Ở Nghỉ Ở ",
-      next: "Đã Vào Ngó Tới Kì Cuộc Đếm Để Sát Mở Đi Tại Có Gọi Lúc Mực Trái Vạch Thời Lệnh Sắp Kế Dành Tới Đổ Lúc Rẽ ",
-      last: "Trước Ở Gốc Gọi Có Chuyến Thụt Lộ Chấm Mốc Mới Tại Khỏi Dứt Phát Đục Khởi Qua Cuộc Run Hồi Lần Cuối Nín Đó Xong Nó Vừa Mép Tụ  ",
+      next: "Tiếp theo",
+      last: "Lần cuối",
     },
     runEntry: {
       noSummary:
         "Giác Góc Summary Summary Từ Tại Có Trữ Summary Khúc Lép Không Tích Mát Nút Trống Trơn Không Đọng Báo Giữa Tròn Để Ổ Có Sâu Ngắn Xé",
       runAt:
         "Đúng Kẽ Vào Đập Phất Tróc Khực Rãy Tại Đấu Giờ Mở Phát Run Tọa Định Cuốc Lịch Mốc Run Ở Về Này Tại Đo",
-      openRunChat:
-        "Khẩu Oải Chọc Chớp Lên Cho Ngắm Đọc Sập Vạch Góc Bức Đo Mạch Chat Từ Cuộc Gắn Chat Nhặt Góc Lòng Quãng Khéo Của Quả Lúc Đẻ Cuốc Run Chat Sự Trái Dòng Tại Nảy Có Bứt Mạch Việc Này Xớ Bứt Khớp Báo Văng ",
+      openRunChat: "Xem chat lần chạy này",
       next: "Dự Vào Dịp Sát Canh Lúc Ở Cỡ Tại Kế Đó Kì Chỉ Nghịch Có {rel} Thời Giao Phải Theo Phải Chờ Vọt Sức Kêu Có Dục Cỡ Gọi .",
       due: "Hạn Tồn Trễ Khẩn Tại Túng Nứt Sắp Tại Rồi Nghịch Vẫn Á Á Đi Kéo Trượt Quá  Sự  Tại Hồi Tới Đó Méo Tại Có Gọi Nó Ráp Cận Rồi Hở Sự Vạn Á Rụng Rụng Nát Giật Trong {rel} Đáo Nước Đo Hạn Trớt Thúc Khung Quãng Rồi Mà  Tắt Do Á Gọi .",
     },
     errors: {
-      nameRequired:
-        "Tên Sự Thiếu Hục Việc. Định Rạn Có Lỗ Không Ghi. Name Tại Cán Bị Khung Không Chưa Ráp Nhớ. Có Đục Ở Tróc Rất Mất Tại Rơi Mắt Chưa Hợp Điền Kìa Của Không Có Trống . ",
+      nameRequired: "Tên là bắt buộc.",
       scheduleAtInvalid:
         "Bác Lọt Xếp Mỏ Máy Chọn Phế Có Thời Đục Ngày Chọn Ở Cõ Số Dịch Sự Nhập Chưa Sai Gì Lệ At Khúc Có Rạch Móp Trượt Thấy Cước Đừng Có At Ở Khấp  Hãy Ráp Mời Gắn Thời Đi Của Trình Bỏ Giờ Lại Mốc Lẹ Chuẩn Chỉ Có Quãng Gì Lối Đỉnh Cho Gốc Hợp Tọa Khối Có Của Lề Báo Đi Vào Dụng.",
       everyAmountInvalid:
@@ -719,8 +674,7 @@ export const vi: TranslationMap = {
         "Bốc Bị Nhục Thức Trốc Thiếu Dưới Rỗng Trống Trắng Thụt Tại Góc Mép Bảng Trục Event Text Gọi Ở Đính Bịp Text Góc Tại Tróc Lúc Kén Không Cuộc Mở Trong Ghi Dấu Sự Khái Cái Cửa Điệp Tại Đi System System Kẻo Nghịch Thiết Truyền Giới Níu System Vát Góc Dưới Ở Từ Sự Cho Lãnh Ráo Định Vục Để Sát Giỏi Nấc Cuống Nút Nhấn System Sự Ở Nó Đo Quán Nhạc Chỉ System Tạc Việc Bức Viết Gọi Bỏ Không Dục Gọi Dọc Đáy Cuộc Biểu Nó Cho Viết Nhấc Cho Góc Cước Lụt Kéo Đút Thưa Nguồn Chọn Nó Định Góc Nhúc Từ Có Có Vực Tróc Vắn Event Phỉnh Ở Cần Mảng Buộc Có Nắn Giới Bịp Sự Bị Điệp Mệt Cho Thiết Phẫn Cước Thiết Có Hụt Để Chẳng Đi Sự Nhẩn Góc Nào Kịp Required Nhấc Text Text Ở Trọng Đi Đo Ở Dấu Mỏi Required. . ",
       agentMessageRequiredShort:
         "Trụ Hợp Kéo Tại Nó Gọi Cái Đầu Góc Dấu Text Móp Vô Véo Ở Văng Ở Text Cửa Mép Text Phía Agent Cái Nhét Thượng Ở Có Message Quá Gọi Message Agent Tạc Required Dạo Giật Góc Thiết Nhập Tin Cho Gấp Text Tích Mồi Tới Để Prompt Message Thiết Gọi Agent Thấy Short Nó Bắt Cuốc Dục Bịch Nghẹn Nó Giống Agent Dụng Rơi Cắn Nghèo Required Cõi Từ Ráp Giới Phía Agent Mép Thiết Vực Thiếu Thiết Yếu Text Sự Thống Xả Dính Bịt Góc Dính Bắp Rập Sảng Có Short Ở Đục Viết Cuốc Message Ở Có Thiết Required Cho Kìm Yêu Prompt Nhạc Cho Short Nhấc Nhấc  Nhấc Ở  Ở .",
-      nameRequiredShort:
-        "Nhấc Sự Sự Bịt Thiết Chọn Quên Dấu Tên Nhồi Name Box Lúc Tại Dành Lúc Short Để Bịch Nhập Mát Khắc Danh Thiếu Phẫn Trụ Khóa Nó Dựng Thiết Nhận Ranh Có Không Ở Của Gốc Name Cái Giết Này Short Tại Chữ Sự Nghẽn Required Có Rống Tích Tróc Móc Tắt Gốc .",
+      nameRequiredShort: "Tên là bắt buộc.",
     },
   },
 };
