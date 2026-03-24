@@ -597,10 +597,10 @@ function exportMarkdown(props: ChatProps): void {
 }
 
 const WELCOME_SUGGESTIONS = [
-  "What can you do?",
-  "Summarize my recent sessions",
-  "Help me configure a channel",
-  "Check system health",
+  "Bạn có khả năng gì?",
+  "Tóm tắt các phiên làm việc gần đây",
+  "Cách kết nối kênh Discord",
+  "Kiểm tra trạng thái hệ thống",
 ];
 
 function renderWelcomeState(props: ChatProps): TemplateResult {
@@ -623,10 +623,10 @@ function renderWelcomeState(props: ChatProps): TemplateResult {
       }
       <h2>${name}</h2>
       <div class="agent-chat__badges">
-        <span class="agent-chat__badge"><img src=${logoUrl} alt="" /> Ready to chat</span>
+        <span class="agent-chat__badge"><img src=${logoUrl} alt="" /> Sẵn sàng hỗ trợ</span>
       </div>
       <p class="agent-chat__hint">
-        Type a message below &middot; <kbd>/</kbd> for commands
+        Nhắn tin bên dưới &middot; Gõ <kbd>/</kbd> để mở lệnh
       </p>
       <div class="agent-chat__suggestions">
         ${WELCOME_SUGGESTIONS.map(
@@ -867,9 +867,9 @@ export function renderChat(props: ChatProps) {
 
   const placeholder = props.connected
     ? hasAttachments
-      ? "Add a message or paste more images..."
-      : `Message ${props.assistantName || "agent"} (Enter to send)`
-    : "Connect to the gateway to start chatting...";
+      ? "Thêm tin nhắn hoặc dán thêm ảnh..."
+      : `Nhắn tin cho ${props.assistantName || "trợ lý"} (Nhấn Enter để gửi)`
+    : "Kết nối với gateway để bắt đầu trò chuyện...";
 
   const requestUpdate = props.onRequestUpdate ?? (() => {});
   const getDraft = props.getDraft ?? (() => props.draft);
