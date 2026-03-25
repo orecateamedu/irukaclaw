@@ -91,46 +91,6 @@ export function renderTab(state: AppViewState, tab: Tab, opts?: { collapsed?: bo
   `;
 }
 
-function renderCronFilterIcon(hiddenCount: number) {
-  return html`
-    <span style="position: relative; display: inline-flex; align-items: center;">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-      </svg>
-      ${
-        hiddenCount > 0
-          ? html`<span
-            style="
-              position: absolute;
-              top: -5px;
-              right: -6px;
-              background: var(--color-accent, #6366f1);
-              color: #fff;
-              border-radius: var(--radius-full);
-              font-size: 9px;
-              line-height: 1;
-              padding: 1px 3px;
-              pointer-events: none;
-            "
-          >${hiddenCount}</span
-          >`
-          : ""
-      }
-    </span>
-  `;
-}
-
 export function renderChatSessionSelect(state: AppViewState) {
   const sessionGroups = resolveSessionOptionGroups(state, state.sessionKey, state.sessionsResult);
   const modelSelect = renderChatModelSelect(state);
@@ -171,15 +131,9 @@ export function renderChatSessionSelect(state: AppViewState) {
 }
 
 export function renderChatControls(state: AppViewState) {
-  const hideCron = state.sessionsHideCron ?? true;
-  const hiddenCronCount = hideCron
-    ? countHiddenCronSessions(state.sessionKey, state.sessionsResult)
-    : 0;
   const disableThinkingToggle = state.onboarding;
-  const disableFocusToggle = state.onboarding;
   const showThinking = state.onboarding ? false : state.settings.chatShowThinking;
   const showToolCalls = state.onboarding ? true : state.settings.chatShowToolCalls;
-  const focusActive = state.onboarding ? true : state.settings.chatFocusMode;
   const toolCallsIcon = html`
     <svg
       width="18"
@@ -209,24 +163,6 @@ export function renderChatControls(state: AppViewState) {
     >
       <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
       <path d="M21 3v5h-5"></path>
-    </svg>
-  `;
-  const focusIcon = html`
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M4 7V4h3"></path>
-      <path d="M20 7V4h-3"></path>
-      <path d="M4 17v3h3"></path>
-      <path d="M20 17v3h-3"></path>
-      <circle cx="12" cy="12" r="3"></circle>
     </svg>
   `;
   return html`
@@ -290,39 +226,6 @@ export function renderChatControls(state: AppViewState) {
         title=${disableThinkingToggle ? t("chat.onboardingDisabled") : t("chat.toolCallsToggle")}
       >
         ${toolCallsIcon}
-      </button>
-      <button
-        class="btn btn--sm btn--icon ${focusActive ? "active" : ""}"
-        ?disabled=${disableFocusToggle}
-        @click=${() => {
-          if (disableFocusToggle) {
-            return;
-          }
-          state.applySettings({
-            ...state.settings,
-            chatFocusMode: !state.settings.chatFocusMode,
-          });
-        }}
-        aria-pressed=${focusActive}
-        title=${disableFocusToggle ? t("chat.onboardingDisabled") : t("chat.focusToggle")}
-      >
-        ${focusIcon}
-      </button>
-      <button
-        class="btn btn--sm btn--icon ${hideCron ? "active" : ""}"
-        @click=${() => {
-          state.sessionsHideCron = !hideCron;
-        }}
-        aria-pressed=${hideCron}
-        title=${
-          hideCron
-            ? hiddenCronCount > 0
-              ? t("chat.showCronSessionsHidden", { count: String(hiddenCronCount) })
-              : t("chat.showCronSessions")
-            : t("chat.hideCronSessions")
-        }
-      >
-        ${renderCronFilterIcon(hiddenCronCount)}
       </button>
     </div>
   `;
@@ -854,15 +757,6 @@ export function resolveSessionOptionGroups(
   return Array.from(groups.values());
 }
 
-/** Count sessions with a cron: key that would be hidden when hideCron=true. */
-function countHiddenCronSessions(sessionKey: string, sessions: SessionsListResult | null): number {
-  if (!sessions?.sessions) {
-    return 0;
-  }
-  // Don't count the currently active session even if it's a cron.
-  return sessions.sessions.filter((s) => isCronSessionKey(s.key) && s.key !== sessionKey).length;
-}
-
 function resolveAgentGroupLabel(state: AppViewState, agentIdRaw: string): string {
   const normalized = agentIdRaw.trim().toLowerCase();
   const agent = (state.agentsList?.agents ?? []).find(
@@ -1031,6 +925,359 @@ export function renderThemeToggle(state: AppViewState) {
               @click=${(e: Event) => pick(opt, e)}
             >${opt.icon}</button>`,
         )}
+      </div>
+    </div>
+  `;
+}
+
+export const formatModelName = (rawLabel: string): string => {
+  if (!rawLabel) {
+    return "";
+  }
+  let clean = rawLabel.replace(/\s*·\s*[a-zA-Z0-9_-]+$/, "");
+  const matchObj = clean.match(/\((.*?)\)/);
+  if (matchObj) {
+    clean = matchObj[1];
+  }
+
+  const id = clean.toLowerCase();
+
+  if (id.includes("claude-3-5-sonnet")) {
+    return "Claude 3.5 Sonnet";
+  }
+  if (id.includes("claude-3-5-haiku")) {
+    return "Claude 3.5 Haiku";
+  }
+  if (id.includes("claude-3-opus")) {
+    return "Claude 3 Opus";
+  }
+  if (id.includes("claude-3-sonnet")) {
+    return "Claude 3 Sonnet";
+  }
+  if (id.includes("claude-3-haiku")) {
+    return "Claude 3 Haiku";
+  }
+
+  if (id.includes("gpt-4o-mini")) {
+    return "GPT-4o mini";
+  }
+  if (id.includes("gpt-4o")) {
+    return "GPT-4o";
+  }
+  if (id.includes("gpt-4-turbo")) {
+    return "GPT-4 Turbo";
+  }
+  if (id.includes("gpt-4")) {
+    return "GPT-4";
+  }
+  if (id.includes("o1-mini")) {
+    return "o1-mini";
+  }
+  if (id.includes("o1-preview") || id === "o1") {
+    return "OpenAI o1";
+  }
+
+  if (id.includes("gemini-1.5-pro")) {
+    return "Gemini 1.5 Pro";
+  }
+  if (id.includes("gemini-1.5-flash")) {
+    return "Gemini 1.5 Flash";
+  }
+  if (id.includes("gemini-2.0-flash")) {
+    return "Gemini 2.0 Flash";
+  }
+  if (id.includes("gemini-pro")) {
+    return "Gemini Pro";
+  }
+
+  if (id.includes("llama-3.1") && id.includes("405b")) {
+    return "Llama 3.1 405B";
+  }
+  if (id.includes("llama-3.1") && id.includes("70b")) {
+    return "Llama 3.1 70B";
+  }
+  if (id.includes("llama-3.1") && id.includes("8b")) {
+    return "Llama 3.1";
+  }
+
+  if (id.includes("mixtral-8x7b")) {
+    return "Mixtral 8x7B";
+  }
+  if (id.includes("deepseek-coder")) {
+    return "DeepSeek Coder";
+  }
+
+  return clean
+    .replace(/-[0-9]{8}$/, "")
+    .replace(/-preview|-exp|-latest|-vision/g, "")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+/**
+ * Chat header kiểu Zalo: hiển thị avatar + tên agent đang chat,
+ * kèm model đang dùng ở dòng phụ.
+ */
+export function renderChatAgentHeader(state: AppViewState) {
+  const agents = state.agentsList?.agents ?? [];
+  const parsed = parseAgentSessionKey(state.sessionKey);
+  const agentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
+  const agent = agents.find((a) => a.id === agentId);
+
+  const getAgentDisplayName = (id: string, rawName?: string | null): string => {
+    const trimmed = rawName?.trim();
+    if (trimmed && trimmed !== "main") {
+      return trimmed;
+    }
+    if (id === "main") {
+      return "Trợ lý hệ thống";
+    }
+    return id;
+  };
+
+  const agentName = getAgentDisplayName(agentId, agent?.identity?.name ?? agent?.name);
+  const avatarUrl = agent?.identity?.avatarUrl?.trim() || null;
+
+  // Lấy label model đang dùng (nếu có)
+
+  const { defaultLabel } = resolveChatModelSelectState(state);
+  const modelLabel = formatModelName(defaultLabel || "");
+
+  return html`
+    <div class="chat-agent-header">
+      <div class="chat-agent-header__avatar">
+        ${
+          avatarUrl
+            ? html`<img src=${avatarUrl} alt=${agentName} class="chat-agent-header__avatar-img" />`
+            : html`<div class="chat-agent-header__avatar-placeholder">${agentName.charAt(0).toUpperCase()}</div>`
+        }
+        <span class="chat-agent-header__status-dot"></span>
+      </div>
+      <div class="chat-agent-header__info">
+        <span class="chat-agent-header__name">${agentName}</span>
+        ${modelLabel ? html`<span class="chat-agent-header__model">${modelLabel}</span>` : nothing}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Panel danh sách agent bên trái, kiểu cột chat Zalo.
+ * Chỉ hiện các agent đã kết nối API thành công (có model catalog).
+ */
+export function renderChatAgentList(state: AppViewState, onAgentSelect: (agentId: string) => void) {
+  const agents = state.agentsList?.agents ?? [];
+
+  // Lấy agentId đang active
+  const parsed = parseAgentSessionKey(state.sessionKey);
+  const currentAgentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
+
+  // Lọc agent: chỉ lấy agent có tên hoặc không phải hệ thống ẩn
+  const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
+
+  // Xóa điều kiện ẩn sidebar do user muốn xem UI z-index
+
+  // Nếu không có agent nào hoặc chỉ có 1 agent duy nhất, không hiển thị thanh trợ lý
+  if (visibleAgents.length === 0) {
+    return nothing;
+  }
+
+  const getDisplayName = (id: string, rawName?: string | null): string => {
+    const trimmed = rawName?.trim();
+    if (trimmed) {
+      return trimmed;
+    }
+    if (id === "main") {
+      return "Trợ lý hệ thống";
+    }
+    return id;
+  };
+
+  return html`
+    <nav class="chat-agent-bar" aria-label="Chọn trợ lý">
+      ${visibleAgents.map((agent) => {
+        const name = getDisplayName(agent.id, agent.identity?.name ?? agent.name);
+        const avatarUrl = agent.identity?.avatarUrl?.trim() || null;
+        const isActive = agent.id === currentAgentId;
+        return html`
+          <button
+            class="chat-agent-bar__item ${isActive ? "chat-agent-bar__item--active" : ""}"
+            role="tab"
+            aria-selected=${isActive}
+            title="${name}"
+            @click=${() => onAgentSelect(agent.id)}
+          >
+            <div class="chat-agent-bar__avatar">
+              ${
+                avatarUrl
+                  ? html`<img src=${avatarUrl} alt=${name} />`
+                  : html`<span>${name.charAt(0).toUpperCase()}</span>`
+              }
+            </div>
+            <span class="chat-agent-bar__name">${name}</span>
+          </button>
+        `;
+      })}
+    </nav>
+  `;
+}
+
+/**
+ * Cột trái kiểu Zalo: session list + agent footer.
+ * Bao gồm: search bar, danh sách hội thoại, agent info cuối cột.
+ */
+export function renderChatLeftPanel(
+  state: AppViewState,
+  onSessionSelect: (sessionKey: string) => void,
+  onAgentSelect: (agentId: string) => void,
+) {
+  const sessions = state.sessionsResult?.sessions ?? [];
+  const currentKey = state.sessionKey;
+
+  const agents = state.agentsList?.agents ?? [];
+  const parsed = parseAgentSessionKey(currentKey);
+  const currentAgentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
+
+  const getAgentDisplayName = (id: string, rawName?: string | null): string => {
+    const trimmed = rawName?.trim();
+    if (trimmed && trimmed !== "main") {
+      return trimmed;
+    }
+    if (id === "main") {
+      return "Trợ lý hệ thống";
+    }
+    return id;
+  };
+
+  const currentAgent = agents.find((a) => a.id === currentAgentId);
+  const currentAgentName = getAgentDisplayName(
+    currentAgentId,
+    currentAgent?.identity?.name ?? currentAgent?.name,
+  );
+  const currentAgentAvatar = currentAgent?.identity?.avatarUrl?.trim() || null;
+  const { defaultLabel } = resolveChatModelSelectState(state);
+  const modelLabel = formatModelName(defaultLabel || "");
+  const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
+
+  const formatTime = (ts: number | undefined): string => {
+    if (!ts) {
+      return "";
+    }
+    const d = new Date(ts);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) {
+      return d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+    }
+    if (diffDays <= 6) {
+      return d.toLocaleDateString("vi-VN", { weekday: "short" });
+    }
+    return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+  };
+
+  type SessionRow = { key: string; lastMessage?: string; updatedAt?: number };
+
+  return html`
+    <div class="chat-left-panel">
+      <div class="chat-left-panel__search">
+        <span class="chat-left-panel__search-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input type="text" class="chat-left-panel__search-input" placeholder="Tìm kiếm hội thoại..." ?disabled=${!state.connected} />
+      </div>
+
+      <ul class="chat-left-panel__sessions" role="listbox" aria-label="Danh sách hội thoại">
+        ${
+          sessions.length === 0
+            ? html`
+                <li class="chat-left-panel__empty">Chưa có hội thoại nào</li>
+              `
+            : sessions.slice(0, 80).map((rawSession) => {
+                const session = rawSession as unknown as SessionRow;
+                const isActive = session.key === currentKey;
+                const displayKey = session.key
+                  .replace(/^agent:[^:]+:/, "")
+                  .replace(/^main$/, "Hội thoại chính");
+                return html`
+                <li
+                  class="chat-left-panel__session ${isActive ? "chat-left-panel__session--active" : ""}"
+                  role="option"
+                  aria-selected=${isActive}
+                  @click=${() => onSessionSelect(session.key)}
+                >
+                  <div class="chat-left-panel__session-avatar">
+                    ${
+                      currentAgentAvatar
+                        ? html`<img src=${currentAgentAvatar} alt="" />`
+                        : html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
+                    }
+                  </div>
+                  <div class="chat-left-panel__session-body">
+                    <div class="chat-left-panel__session-top">
+                      <span class="chat-left-panel__session-name">${displayKey}</span>
+                      ${
+                        session.updatedAt
+                          ? html`<span class="chat-left-panel__session-time">${formatTime(session.updatedAt)}</span>`
+                          : nothing
+                      }
+                    </div>
+                    ${
+                      session.lastMessage
+                        ? html`<span class="chat-left-panel__session-preview">${session.lastMessage}</span>`
+                        : nothing
+                    }
+                  </div>
+                </li>
+              `;
+              })
+        }
+      </ul>
+
+      <div class="chat-left-panel__agent-footer">
+        <div class="chat-left-panel__agent-label">Trợ lý</div>
+        ${
+          visibleAgents.length <= 1
+            ? html`
+              <div class="chat-left-panel__agent-current">
+                <div class="chat-left-panel__agent-avatar">
+                  ${
+                    currentAgentAvatar
+                      ? html`<img src=${currentAgentAvatar} alt="" />`
+                      : html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
+                  }
+                </div>
+                <div class="chat-left-panel__agent-info">
+                  <span class="chat-left-panel__agent-name">${currentAgentName}</span>
+                  ${modelLabel ? html`<span class="chat-left-panel__agent-model">${modelLabel}</span>` : nothing}
+                </div>
+              </div>
+            `
+            : html`
+              <div class="chat-left-panel__agent-list">
+                ${visibleAgents.map((agent) => {
+                  const name = getAgentDisplayName(agent.id, agent.identity?.name ?? agent.name);
+                  const avatarUrl = agent.identity?.avatarUrl?.trim() || null;
+                  const isActive = agent.id === currentAgentId;
+                  return html`
+                    <button
+                      class="chat-left-panel__agent-item ${isActive ? "chat-left-panel__agent-item--active" : ""}"
+                      title="${name}"
+                      @click=${() => onAgentSelect(agent.id)}
+                    >
+                      <div class="chat-left-panel__agent-avatar">
+                        ${
+                          avatarUrl
+                            ? html`<img src=${avatarUrl} alt="" />`
+                            : html`<span>${name.charAt(0).toUpperCase()}</span>`
+                        }
+                      </div>
+                      <span class="chat-left-panel__agent-name">${name}</span>
+                    </button>
+                  `;
+                })}
+              </div>
+            `
+        }
       </div>
     </div>
   `;
