@@ -48,6 +48,22 @@
       },
       "group": "none",
       "problemMatcher": []
+    },
+    {
+      "label": "4. 🤖 Auto-Retry Antigravity",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/.vscode/auto-retry-antigravity.sh",
+      "isBackground": true,
+      "presentation": {
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false,
+        "reveal": "silent"
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
     }
   ]
 }
