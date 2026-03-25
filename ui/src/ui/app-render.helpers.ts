@@ -11,6 +11,7 @@ import {
   resolveChatModelOverrideValue,
   resolveChatModelSelectState,
 } from "./chat-model-select-state.ts";
+import { cleanAutoTitleLabel } from "./chat/chat-title.ts";
 import { ChatState, loadChatHistory } from "./controllers/chat.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { icons } from "./icons.ts";
@@ -1195,9 +1196,11 @@ export function renderChatLeftPanel(
             : sessions.slice(0, 80).map((rawSession) => {
                 const session = rawSession as unknown as SessionRow;
                 const isActive = session.key === currentKey;
-                const displayKey = session.key
-                  .replace(/^agent:[^:]+:/, "")
-                  .replace(/^main$/, "Hội thoại chính");
+                // Ưu tiên hiển thị auto-title label (nếu có), fallback về session key thân thiện
+                const rawLabel = (rawSession as unknown as { label?: string }).label;
+                const displayKey =
+                  cleanAutoTitleLabel(rawLabel) ||
+                  session.key.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
                 return html`
                 <li
                   class="chat-left-panel__session ${isActive ? "chat-left-panel__session--active" : ""}"

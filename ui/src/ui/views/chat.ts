@@ -5,6 +5,7 @@ import {
   CHAT_ATTACHMENT_ACCEPT,
   isSupportedChatAttachmentMimeType,
 } from "../chat/attachment-support.ts";
+import { getAutoTitleClient, maybeTriggerAutoTitle } from "../chat/chat-title.ts";
 import { DeletedMessages } from "../chat/deleted-messages.ts";
 import { exportChatMarkdown } from "../chat/export.ts";
 import {
@@ -32,8 +33,8 @@ import type { GatewaySessionRow, SessionsListResult } from "../types.ts";
 import type { ChatItem, MessageGroup } from "../types/chat-types.ts";
 import type { ChatAttachment, ChatQueueItem } from "../ui-types.ts";
 import { agentLogoUrl, resolveAgentAvatarUrl } from "./agents-utils.ts";
-import { renderMarkdownSidebar } from "./markdown-sidebar.ts";
 import "../components/resizable-divider.ts";
+import { renderMarkdownSidebar } from "./markdown-sidebar.ts";
 
 export type CompactionIndicatorStatus = {
   active: boolean;
@@ -894,6 +895,22 @@ export function renderChat(props: ChatProps) {
 
   const chatItems = buildChatItems(props);
   const isEmpty = chatItems.length === 0 && !props.loading;
+
+  // Auto-titling: tự sinh tiêu đề cho phiên khi có đủ hội thoại
+  if (!props.loading && chatItems.length > 0) {
+    const autoTitleClient = getAutoTitleClient();
+    if (autoTitleClient) {
+      const messageGroups = chatItems
+        .filter((item) => item.type === "group")
+        .map((item) => item.group);
+      const currentLabel = (
+        props.sessions?.sessions?.find((s) => s.key === props.sessionKey) as unknown as
+          | { label?: string }
+          | undefined
+      )?.label;
+      void maybeTriggerAutoTitle(autoTitleClient, props.sessionKey, messageGroups, currentLabel);
+    }
+  }
 
   const thread = html`
     <div

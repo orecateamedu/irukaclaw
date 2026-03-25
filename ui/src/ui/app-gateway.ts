@@ -13,6 +13,7 @@ import {
 import { handleAgentEvent, resetToolStream, type AgentEventPayload } from "./app-tool-stream.ts";
 import type { OpenClawApp } from "./app.ts";
 import { shouldReloadHistoryForFinalEvent } from "./chat-event-reload.ts";
+import { setAutoTitleClient } from "./chat/chat-title.ts";
 import { formatConnectError } from "./connect-error.ts";
 import { loadAgents } from "./controllers/agents.ts";
 import { loadAssistantIdentity } from "./controllers/assistant-identity.ts";
@@ -264,6 +265,7 @@ export function connectGateway(host: GatewayHost) {
     },
   });
   host.client = client;
+  setAutoTitleClient(client); // Đăng ký client vào module singleton để auto-title dùng
   previousClient?.stop();
   client.start();
 }
