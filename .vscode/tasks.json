@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. Pull code từ Git",
+      "type": "shell",
+      "command": "cd ~/Desktop/work-space/irukaclaw && git pull --rebase 2>&1 | tail -5",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "name": "🔄 Git Pull",
+        "close": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Khởi động IruKaClaw Gateway",
+      "type": "shell",
+      "command": "cd ~/Desktop/work-space/irukaclaw && lsof -ti:18789 | xargs kill -9 2>/dev/null || true; node dist/index.js gateway --port 18789",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "name": "🦞 IruKaClaw Gateway",
+        "close": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "3. iruKaClaw",
+      "type": "shell",
+      "command": "cd ~/Desktop/work-space/irukaclaw && exec $SHELL",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "name": "🐟 iruKaClaw",
+        "close": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "group": "none",
+      "problemMatcher": []
+    }
+  ]
+}

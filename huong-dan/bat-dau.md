@@ -28,14 +28,14 @@
 
 ### Tính năng chính:
 
-| Tính năng                 | Mô tả                                                 |
-| ------------------------- | ----------------------------------------------------- |
-| 🤖 **Trợ Lý AI**          | Hỗ trợ Gemini, ChatGPT, Claude, OpenRouter...         |
-| 📡 **20+ Kênh Chat**      | Telegram, Discord, WhatsApp, Slack, Zalo, iMessage... |
-| 🌐 **Dashboard Web**      | Giao diện quản lý tại `http://localhost:18789`        |
-| ⏰ **Lịch Trình Tự Động** | Cron jobs — gửi tin/chạy lệnh theo lịch               |
-| 🔧 **Kỹ Năng Mở Rộng**    | Skills — tích hợp thêm công cụ theo nhu cầu           |
-| 🔒 **Bảo Mật**            | Chạy local, dữ liệu không ra ngoài trừ khi gọi AI     |
+| Tính năng                | Mô tả                                                 |
+| ------------------------ | ----------------------------------------------------- |
+| 🤖**Trợ Lý AI**          | Hỗ trợ Gemini, ChatGPT, Claude, OpenRouter...         |
+| 📡**20+ Kênh Chat**      | Telegram, Discord, WhatsApp, Slack, Zalo, iMessage... |
+| 🌐**Dashboard Web**      | Giao diện quản lý tại `http://localhost:18789`        |
+| ⏰**Lịch Trình Tự Động** | Cron jobs — gửi tin/chạy lệnh theo lịch               |
+| 🔧**Kỹ Năng Mở Rộng**    | Skills — tích hợp thêm công cụ theo nhu cầu           |
+| 🔒**Bảo Mật**            | Chạy local, dữ liệu không ra ngoài trừ khi gọi AI     |
 
 ---
 
@@ -84,12 +84,12 @@ SLACK_BOT_TOKEN=xoxb-...
 
 ```mermaid
 graph TD
-    A("Mở Terminal") --> B["cd ~/Desktop/work-space/irukaclaw"]
+    A["Mở Terminal"] --> B["cd ~/Desktop/work-space/irukaclaw"]
     B --> C["node dist/index.js gateway --port 18789"]
-    C --> D{"Thấy dòng<br>'listening on ws://127.0.0.1:18789'?"}
-    D -- Có ✅ --> E["Mở http://localhost:18789<br>trên trình duyệt"]
-    D -- Không ❌ --> F["Kiểm tra lỗi trong terminal<br>Thường do: cổng bị chiếm<br>hoặc thiếu API Key"]
-    E --> G("Đăng nhập Dashboard")
+    C --> D{"Thành công?"}
+    D -->|"Có"| E["Mở http://localhost:18789 trên trình duyệt"]
+    D -->|"Không"| F["Kiểm tra lỗi: cổng bị chiếm hoặc thiếu API Key"]
+    E --> G["Đăng nhập Dashboard"]
 ```
 
 ### Lệnh khởi động:
@@ -126,25 +126,25 @@ Nhấn Ctrl+C trong terminal đang chạy gateway
 
 ```mermaid
 graph LR
-    ROOT["🏠 Dashboard"] --> A["💬 Trò Chuyện<br>Chat với AI"]
-    ROOT --> B["📊 Bảng Điều Khiển"]
-    ROOT --> C["🤖 Trợ Lý Ảo"]
-    ROOT --> D["⚙️ Cài Đặt"]
+    ROOT["Dashboard"] --> A["Trò Chuyện với AI"]
+    ROOT --> B["Bảng Điều Khiển"]
+    ROOT --> C["Trợ Lý Ảo"]
+    ROOT --> D["Cài Đặt"]
 
     B --> B1["Tổng Quan"]
     B --> B2["Kênh Giao Tiếp"]
     B --> B3["Thiết Bị Client"]
     B --> B4["Phiên Hoạt Động"]
-    B --> B5["Thống Kê Token/Chi Phí"]
-    B --> B6["Lịch Trình Tự Động"]
+    B --> B5["Thống Kê"]
+    B --> B6["Lịch Trình"]
 
-    C --> C1["Quản lý Agent"]
+    C --> C1["Quản Lý Agent"]
     C --> C2["Kỹ Năng"]
     C --> C3["Thiết Bị Kết Nối"]
 
     D --> D1["Cấu Hình Nâng Cao"]
     D --> D2["Kênh Liên Lạc"]
-    D --> D3["Giao Diện/Theme"]
+    D --> D3["Giao Diện"]
     D --> D4["Tự Động Hóa"]
     D --> D5["Hạ Tầng"]
 ```
@@ -200,10 +200,10 @@ Tạo các tác vụ chạy định kỳ mà không cần bạn thao tác:
 
 ```mermaid
 graph LR
-    A["Sửa file trong<br>ui/src/..."] --> B["pnpm ui:build<br>(tại thư mục irukaclaw)"]
-    B --> C["Ctrl+C gateway<br>Rồi khởi động lại"]
-    C --> D["Cmd+Shift+R<br>Xóa cache trình duyệt"]
-    D --> E["Kiểm tra kết quả ✅"]
+    A["Sửa file trong ui/src"] --> B["pnpm ui:build"]
+    B --> C["Ctrl+C rồi chạy lại gateway"]
+    C --> D["Cmd+Shift+R để xóa cache"]
+    D --> E["Kiểm tra kết quả"]
 ```
 
 ```bash
@@ -234,14 +234,13 @@ node dist/index.js gateway --port 18789
 
 ```mermaid
 graph LR
-    A["🖥️ Máy Mac của bạn"] --> B["Gateway Server<br>ws://localhost:18789"]
-    B --> C["🌐 Dashboard Web<br>http://localhost:18789"]
-    B --> D["🤖 Trợ Lý AI<br>Gemini / GPT..."]
-    B --> E["📡 Kênh Giao Tiếp"]
+    A["Máy Mac của bạn"] --> B["Gateway ws://localhost:18789"]
+    B --> C["Dashboard http://localhost:18789"]
+    B --> D["Trợ Lý AI: Gemini/GPT"]
+    B --> E["Kênh Giao Tiếp"]
     E --> F["Telegram"]
     E --> G["Discord"]
     E --> H["WhatsApp"]
-    E --> I["..."]
 ```
 
 ## 13. Thông Tin Kỹ Thuật (Tham Khảo)
@@ -258,5 +257,5 @@ graph LR
 
 ---
 
-> 📌 **Ghi chú bảo mật**: Toàn bộ dữ liệu và lịch sử chat lưu tại máy bạn (`~/.openclaw/`).  
+> 📌 **Ghi chú bảo mật**: Toàn bộ dữ liệu và lịch sử chat lưu tại máy bạn (`~/.openclaw/`).
 > Kết nối ra ngoài duy nhất là khi gọi API AI (Gemini/ChatGPT/Claude).

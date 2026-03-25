@@ -12,6 +12,7 @@ coverage
 __openclaw_vitest__/
 __pycache__/
 *.pyc
+!.vscode/
 .tsbuildinfo
 .pnpm-store
 .worktrees/
