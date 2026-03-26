@@ -112,6 +112,55 @@
   color: var(--danger) !important;
 }
 
+/* ── Message Hover Actions (Copy, Edit, Regenerate) ── */
+.chat-group-actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.chat-group.user .chat-group-actions {
+  margin-left: 0;
+  margin-right: auto;
+  flex-direction: row-reverse;
+}
+
+.chat-group-action {
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+  width: 100%;
+  height: 100%;
+}
+
+.chat-action-icon-check {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  color: var(--ok);
+  transform: scale(0.5);
+}
+
+.chat-group-action.copied .chat-action-icon:first-child {
+  opacity: 0;
+  transform: scale(1.2);
+}
+
+.chat-group-action.copied .chat-action-icon-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
 /* Chat divider (e.g., compaction marker) */
 .chat-divider {
   display: flex;

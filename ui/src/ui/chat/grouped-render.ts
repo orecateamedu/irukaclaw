@@ -122,6 +122,8 @@ export function renderMessageGroup(
     basePath?: string;
     contextWindow?: number | null;
     onDelete?: () => void;
+    onEdit?: (text: string) => void;
+    onRegenerate?: () => void;
   },
 ) {
   const normalizedRole = normalizeRoleForGrouping(group.role);
@@ -177,12 +179,36 @@ export function renderMessageGroup(
           <span class="chat-sender-name">${who}</span>
           <span class="chat-group-timestamp">${timestamp}</span>
           ${renderMessageMeta(meta)}
-          ${normalizedRole === "assistant" && isTtsSupported() ? renderTtsButton(group) : nothing}
-          ${
-            opts.onDelete
-              ? renderDeleteButton(opts.onDelete, normalizedRole === "user" ? "left" : "right")
-              : nothing
-          }
+          <div class="chat-group-actions">
+            <button class="chat-group-action chat-action-copy" title="Copy Text" @click=${(
+              e: Event,
+            ) => {
+              const btn = e.currentTarget as HTMLElement;
+              void navigator.clipboard.writeText(extractGroupText(group)).then(() => {
+                btn.classList.add("copied");
+                setTimeout(() => btn.classList.remove("copied"), 1500);
+              });
+            }}>
+              <span class="chat-action-icon">${icons.copy}</span>
+              <span class="chat-action-icon chat-action-icon-check">${icons.check}</span>
+            </button>
+            ${
+              normalizedRole === "user" && opts.onEdit
+                ? html`<button class="chat-group-action chat-action-edit" title="Edit" @click=${() => opts.onEdit!(extractGroupText(group))}>${icons.edit}</button>`
+                : nothing
+            }
+            ${
+              normalizedRole === "assistant" && opts.onRegenerate
+                ? html`<button class="chat-group-action chat-action-regenerate" title="Regenerate" @click=${() => opts.onRegenerate!()}>${icons.refresh}</button>`
+                : nothing
+            }
+            ${normalizedRole === "assistant" && isTtsSupported() ? renderTtsButton(group) : nothing}
+            ${
+              opts.onDelete
+                ? renderDeleteButton(opts.onDelete, normalizedRole === "user" ? "left" : "right")
+                : nothing
+            }
+          </div>
         </div>
       </div>
     </div>

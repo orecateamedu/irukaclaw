@@ -41,7 +41,7 @@ export function getAutoTitleClient(): GatewayBrowserClient | null {
 /**
  * Trích xuất đoạn text đầu tiên có nghĩa từ MessageGroup của user.
  */
-function extractFirstUserText(groups: MessageGroup[]): string {
+export function extractFirstUserText(groups: MessageGroup[]): string {
   for (const g of groups) {
     if (g.role !== "user") {
       continue;
@@ -69,7 +69,7 @@ function extractFirstUserText(groups: MessageGroup[]): string {
  * Không gọi API AI — dùng heuristic tinh gọn để tránh roundtrip.
  * Nếu dự án sau này muốn nâng cấp lên AI, thay hàm này.
  */
-function deriveTitle(firstUserText: string): string {
+export function deriveTitle(firstUserText: string): string {
   // Bỏ xuống dòng, khoảng trắng thừa
   const cleaned = firstUserText.replace(/\s+/g, " ").replace(/["""]/g, '"').trim();
 
@@ -122,10 +122,9 @@ export async function maybeTriggerAutoTitle(
     return;
   }
 
-  // Chỉ trigger sau khi có ≥ 1 user message và ≥ 1 assistant reply (tổng ≥ 2 groups)
+  // Chỉ trigger sau khi có ≥ 1 user message (không cần đợi assistant, để cập nhật UI lập tức)
   const userCount = messageGroups.filter((g) => g.role === "user").length;
-  const assistantCount = messageGroups.filter((g) => g.role === "assistant").length;
-  if (userCount < 1 || assistantCount < 1) {
+  if (userCount < 1) {
     return;
   }
 
@@ -137,21 +136,52 @@ export async function maybeTriggerAutoTitle(
     return;
   }
 
-  const title = deriveTitle(firstUserText);
-  if (!title || title.length < 3) {
+  const fallbackTitle = deriveTitle(firstUserText);
+  if (!fallbackTitle || fallbackTitle.length < 3) {
     return;
   }
 
+  // Lần 1: Gọi sessions.patch với fallback label để thay thế tức thì UUID trên thanh Sidebar
   try {
     await client.request("sessions.patch", {
-      sessionKey,
-      patch: {
-        label: `${AUTO_TITLE_PREFIX}${title}`,
-      },
+      key: sessionKey,
+      label: `${AUTO_TITLE_PREFIX}${fallbackTitle}`,
     });
   } catch {
-    // Silent fail — auto-title không phải chức năng nghiêm trọng
-    triggeredSessions.delete(sessionKey); // Cho phép thử lại lần sau
+    // Xóa cache để cho phép thử lại nếu lỗi
+    triggeredSessions.delete(sessionKey);
+    return;
+  }
+
+  // Lần 2: Gọi ngầm AI để sinh tiêu đề ngắn gọn thông minh hơn
+  try {
+    const aiResponse = await client.postJson<{
+      choices?: Array<{ message?: { content?: string } }>;
+    }>("/v1/chat/completions", {
+      model: "openclaw",
+      messages: [
+        {
+          role: "user",
+          content: `Tóm tắt nội dung sau thành một tiêu đề siêu ngắn gọn (tối đa 6 từ), chỉ trả về văn bản tiêu đề, không giải thích, không dùng ngoặc kép:\n\n"${firstUserText}"`,
+        },
+      ],
+    });
+
+    let aiTitle = aiResponse?.choices?.[0]?.message?.content?.trim();
+    if (aiTitle) {
+      // Làm sạch nếu AI lỡ tay trả về ngoặc kép ở 2 đầu
+      aiTitle = aiTitle.replace(/^["']|["']$/g, "").trim();
+
+      if (aiTitle.length >= 2) {
+        await client.request("sessions.patch", {
+          key: sessionKey,
+          label: `${AUTO_TITLE_PREFIX}${aiTitle}`,
+        });
+      }
+    }
+  } catch (err) {
+    // Thất bại thì giữ nguyên fallback title đã patch ở Lần 1
+    console.warn("Auto-titling background AI request failed:", err);
   }
 }
 

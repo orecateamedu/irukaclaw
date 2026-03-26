@@ -605,6 +605,46 @@ export class GatewayBrowserClient {
     return p;
   }
 
+  async postJson<T = unknown>(pathname: string, body?: unknown): Promise<T> {
+    const isSecureContext = typeof crypto !== "undefined" && !!crypto.subtle;
+    const deviceIdentity = isSecureContext
+      ? await loadOrCreateDeviceIdentity().catch(() => null)
+      : null;
+    const auth = this.selectConnectAuth({
+      role: CONTROL_UI_OPERATOR_ROLE,
+      deviceId: deviceIdentity?.deviceId ?? "",
+    });
+
+    const url = new URL(pathname, this.opts.url);
+    if (url.protocol === "ws:") {
+      url.protocol = "http:";
+    } else if (url.protocol === "wss:") {
+      url.protocol = "https:";
+    }
+
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    if (auth.authToken) {
+      headers.set("Authorization", `Bearer ${auth.authToken}`);
+    } else if (auth.authPassword) {
+      headers.set("Authorization", `Password ${auth.authPassword}`);
+    }
+
+    const res = await fetch(url.toString(), {
+      method: "POST",
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} ${res.statusText}: ${text}`);
+    }
+
+    return res.json();
+  }
+
   private queueConnect() {
     this.connectNonce = null;
     this.connectSent = false;

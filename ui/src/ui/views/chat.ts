@@ -1001,6 +1001,22 @@ export function renderChat(props: ChatProps) {
                 deleted.delete(item.key);
                 requestUpdate();
               },
+              onEdit: (text: string) => {
+                props.onDraftChange(text);
+                requestAnimationFrame(() => {
+                  document
+                    .querySelector<HTMLTextAreaElement>(".agent-chat__input > textarea")
+                    ?.focus();
+                });
+              },
+              onRegenerate: () => {
+                props.onDraftChange("/retry ");
+                requestAnimationFrame(() => {
+                  document
+                    .querySelector<HTMLTextAreaElement>(".agent-chat__input > textarea")
+                    ?.focus();
+                });
+              },
             });
           }
           return nothing;
@@ -1280,34 +1296,7 @@ export function renderChat(props: ChatProps) {
               ${icons.paperclip}
             </button>
 
-            ${
-              props.agentsList &&
-              props.agentsList.agents.filter((a) => a.id && a.id !== "__system__").length > 1
-                ? html`
-                    <div class="agent-chat__agent-select-wrapper">
-                      <select
-                        class="agent-chat__agent-select"
-                        .value=${props.currentAgentId ?? "main"}
-                        @change=${(e: Event) => props.onAgentChange?.((e.target as HTMLSelectElement).value)}
-                        ?disabled=${!props.connected || props.sending}
-                        title="Chọn Trợ lý"
-                      >
-                        ${props.agentsList.agents
-                          .filter((a) => a.id && a.id !== "__system__")
-                          .map((agent) => {
-                            const name =
-                              agent.identity?.name?.trim() || agent.name?.trim() || agent.id;
-                            const display =
-                              agent.id === "main" && (!agent.name || agent.name === "main")
-                                ? "Trợ lý hệ thống"
-                                : name;
-                            return html`<option value=${agent.id}>${display}</option>`;
-                          })}
-                      </select>
-                    </div>
-                  `
-                : nothing
-            }
+
 
             ${
               isSttSupported()

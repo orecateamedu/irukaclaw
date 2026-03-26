@@ -11,7 +11,8 @@ import {
   resolveChatModelOverrideValue,
   resolveChatModelSelectState,
 } from "./chat-model-select-state.ts";
-import { cleanAutoTitleLabel } from "./chat/chat-title.ts";
+import { cleanAutoTitleLabel, deriveTitle } from "./chat/chat-title.ts";
+import { normalizeMessage } from "./chat/message-normalizer.ts";
 import { ChatState, loadChatHistory } from "./controllers/chat.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { icons } from "./icons.ts";
@@ -1048,11 +1049,63 @@ export function renderChatAgentHeader(state: AppViewState) {
   const sessions = state.sessionsResult?.sessions ?? [];
   const currentSession = sessions.find((s) => s.key === state.sessionKey);
   const rawLabel = (currentSession as unknown as { label?: string })?.label;
-  const displayTitle =
-    cleanAutoTitleLabel(rawLabel) ||
-    state.sessionKey.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
+  const defaultTitleFallback = state.sessionKey
+    .replace(/^agent:[^:]+:/, "")
+    .replace(/^main$/, "Hội thoại chính");
+
+  let fallbackDerived = defaultTitleFallback;
+  if (/^[0-9a-fA-F-]{36}$/.test(defaultTitleFallback)) {
+    // Nếu là UUID, lấy trực tiếp title tạm thời từ lịch sử chat
+    try {
+      if (Array.isArray(state.chatMessages) && state.chatMessages.length > 0) {
+        let firstUserText = "";
+        for (const rawMsg of state.chatMessages) {
+          const m = normalizeMessage(rawMsg);
+          if (m.role === "user") {
+            const content = m.content as string | Array<Record<string, unknown>>;
+            if (Array.isArray(content)) {
+              const textBlock = content.find(
+                (b) => b.type === "text" && typeof b.text === "string" && b.text.trim().length > 3,
+              );
+              if (textBlock && typeof textBlock.text === "string") {
+                firstUserText = textBlock.text;
+                break;
+              }
+            } else if (typeof content === "string" && content.trim().length > 3) {
+              firstUserText = content;
+              break;
+            }
+          }
+        }
+        if (firstUserText) {
+          fallbackDerived = deriveTitle(firstUserText);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const displayTitle = cleanAutoTitleLabel(rawLabel) || fallbackDerived;
 
   const modelLabel = shortModelLabel;
+
+  const onAgentChange = (e: Event) => {
+    const newId = (e.target as HTMLSelectElement).value;
+    state.sessionKey = `agent:${newId}:main`;
+    state.chatMessages = [];
+    state.chatStream = null;
+    state.chatRunId = null;
+    state.applySettings({
+      ...state.settings,
+      sessionKey: state.sessionKey,
+      lastActiveSessionKey: state.sessionKey,
+    });
+    void loadChatHistory(state);
+    void state.loadAssistantIdentity();
+  };
+
+  const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
 
   return html`
     <div class="chat-agent-header">
@@ -1066,7 +1119,32 @@ export function renderChatAgentHeader(state: AppViewState) {
       </div>
       <div class="chat-agent-header__info">
         <span class="chat-agent-header__name">${displayTitle}</span>
-        ${modelLabel ? html`<span class="chat-agent-header__model">${modelLabel}</span>` : nothing}
+        <div class="chat-agent-header__dropdown-wrapper">
+          ${
+            visibleAgents.length > 1
+              ? html`
+                  <select
+                    class="agent-chat__agent-select header-agent-select"
+                    .value=${agentId}
+                    @change=${onAgentChange}
+                    ?disabled=${!state.connected || state.chatSending}
+                    title="Chọn Trợ lý"
+                  >
+                    ${visibleAgents.map((a) => {
+                      const name = a.identity?.name?.trim() || a.name?.trim() || a.id;
+                      const display =
+                        a.id === "main" && (!a.name || a.name === "main")
+                          ? "Trợ lý hệ thống"
+                          : name;
+                      return html`<option value=${a.id}>${display}</option>`;
+                    })}
+                  </select>
+                `
+              : modelLabel
+                ? html`<span class="chat-agent-header__model">${modelLabel}</span>`
+                : nothing
+          }
+        </div>
       </div>
     </div>
   `;

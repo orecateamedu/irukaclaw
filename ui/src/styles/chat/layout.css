@@ -367,20 +367,25 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  margin: 0 18px 14px;
-  padding: 0;
+  margin: 0 auto 24px auto;
+  width: calc(100% - 48px);
+  max-width: 860px;
+  padding: 4px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 28px;
   flex-shrink: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   transition:
     border-color var(--duration-fast) ease,
-    box-shadow var(--duration-fast) ease;
+    box-shadow var(--duration-fast) ease,
+    transform var(--duration-fast) ease;
 }
 
 .agent-chat__input:focus-within {
-  border-color: var(--border-strong);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--border-strong) 24%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 12px 48px rgba(0, 164, 255, 0.12); /* IruKa Blue tint shadow */
+  transform: translateY(-2px);
 }
 
 @supports (backdrop-filter: blur(1px)) {
@@ -392,18 +397,19 @@
 
 .agent-chat__input > textarea {
   width: 100%;
-  min-height: 40px;
-  max-height: 150px;
+  min-height: 48px;
+  max-height: 200px;
   resize: none;
-  padding: 12px 14px 8px;
+  padding: 14px 18px 8px;
   border: none;
   background: transparent;
   color: var(--text);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-family: inherit;
-  line-height: 1.4;
+  line-height: 1.5;
   outline: none;
   box-sizing: border-box;
+  transition: height 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .agent-chat__input > textarea:focus-visible {
