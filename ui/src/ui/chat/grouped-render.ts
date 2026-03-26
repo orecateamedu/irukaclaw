@@ -5,6 +5,7 @@ import type { AssistantIdentity } from "../assistant-identity.ts";
 import { icons } from "../icons.ts";
 import { toSanitizedMarkdownHtml } from "../markdown.ts";
 import { openExternalUrlSafe } from "../open-external-url.ts";
+import { getProviderLogoSvg } from "../provider-logos.ts";
 import { detectTextDirection } from "../text-direction.ts";
 import type { MessageGroup, ToolCard } from "../types/chat-types.ts";
 import { agentLogoUrl } from "../views/agents-utils.ts";
@@ -125,7 +126,7 @@ export function renderMessageGroup(
 ) {
   const normalizedRole = normalizeRoleForGrouping(group.role);
   const assistantName = opts.assistantName ?? "Assistant";
-  const userLabel = group.senderLabel?.trim();
+  const userLabel = group.senderLabel?.trim()?.replace(/\s*\([^)]+\)$/, "");
   const who =
     normalizedRole === "user"
       ? (userLabel ?? "You")
@@ -241,69 +242,9 @@ function extractGroupMeta(group: MessageGroup, contextWindow: number | null): Gr
   return { input, output, cacheRead, cacheWrite, cost, model, contextPercent };
 }
 
-/** Compact token count formatter (e.g. 128000 → "128k"). */
-function fmtTokens(n: number): string {
-  if (n >= 1_000_000) {
-    return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
-  }
-  if (n >= 1_000) {
-    return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
-  }
-  return String(n);
-}
-
-function renderMessageMeta(meta: GroupMeta | null) {
-  if (!meta) {
-    return nothing;
-  }
-
-  const parts: Array<ReturnType<typeof html>> = [];
-
-  // Token counts: ↑input ↓output
-  if (meta.input) {
-    parts.push(html`<span class="msg-meta__tokens">↑${fmtTokens(meta.input)}</span>`);
-  }
-  if (meta.output) {
-    parts.push(html`<span class="msg-meta__tokens">↓${fmtTokens(meta.output)}</span>`);
-  }
-
-  // Cache: R/W
-  if (meta.cacheRead) {
-    parts.push(html`<span class="msg-meta__cache">R${fmtTokens(meta.cacheRead)}</span>`);
-  }
-  if (meta.cacheWrite) {
-    parts.push(html`<span class="msg-meta__cache">W${fmtTokens(meta.cacheWrite)}</span>`);
-  }
-
-  // Cost
-  if (meta.cost > 0) {
-    parts.push(html`<span class="msg-meta__cost">$${meta.cost.toFixed(4)}</span>`);
-  }
-
-  // Context %
-  if (meta.contextPercent !== null) {
-    const pct = meta.contextPercent;
-    const cls =
-      pct >= 90
-        ? "msg-meta__ctx msg-meta__ctx--danger"
-        : pct >= 75
-          ? "msg-meta__ctx msg-meta__ctx--warn"
-          : "msg-meta__ctx";
-    parts.push(html`<span class="${cls}">${pct}% ctx</span>`);
-  }
-
-  // Model
-  if (meta.model) {
-    // Shorten model name: strip provider prefix if present (e.g. "anthropic/claude-3.5-sonnet" → "claude-3.5-sonnet")
-    const shortModel = meta.model.includes("/") ? meta.model.split("/").pop()! : meta.model;
-    parts.push(html`<span class="msg-meta__model">${shortModel}</span>`);
-  }
-
-  if (parts.length === 0) {
-    return nothing;
-  }
-
-  return html`<span class="msg-meta">${parts}</span>`;
+function renderMessageMeta(_meta: GroupMeta | null) {
+  // Tránh hiển thị token usage và tên model thừa ở chân tin nhắn theo request
+  return nothing;
 }
 
 function extractGroupText(group: MessageGroup): string {
@@ -496,6 +437,10 @@ function renderAvatar(
         alt="${assistantName}"
       />`;
     }
+    const svgLogo = getProviderLogoSvg(assistantName);
+    if (svgLogo) {
+      return html`<div class="chat-avatar ${className} chat-avatar--svg">${svgLogo}</div>`;
+    }
     return html`<img
       class="chat-avatar ${className} chat-avatar--logo"
       src="${agentLogoUrl(basePath ?? "")}"
@@ -503,14 +448,20 @@ function renderAvatar(
     />`;
   }
 
-  /* Assistant with no custom avatar: use logo when basePath available */
-  if (normalized === "assistant" && basePath) {
-    const logoUrl = agentLogoUrl(basePath);
-    return html`<img
-      class="chat-avatar ${className} chat-avatar--logo"
-      src="${logoUrl}"
-      alt="${assistantName}"
-    />`;
+  /* Assistant with no custom avatar: use model provider SVG or app logo when basePath available */
+  if (normalized === "assistant") {
+    const svgLogo = getProviderLogoSvg(assistantName);
+    if (svgLogo) {
+      return html`<div class="chat-avatar ${className} chat-avatar--svg">${svgLogo}</div>`;
+    }
+    if (basePath) {
+      const logoUrl = agentLogoUrl(basePath);
+      return html`<img
+        class="chat-avatar ${className} chat-avatar--logo"
+        src="${logoUrl}"
+        alt="${assistantName}"
+      />`;
+    }
   }
 
   return html`<div class="chat-avatar ${className}">${initial}</div>`;

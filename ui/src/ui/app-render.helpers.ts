@@ -16,6 +16,7 @@ import { ChatState, loadChatHistory } from "./controllers/chat.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { icons } from "./icons.ts";
 import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation.ts";
+import { getProviderLogoSvg } from "./provider-logos.ts";
 import type { ThemeTransitionContext } from "./theme-transition.ts";
 import type { ThemeMode, ThemeName } from "./theme.ts";
 import type { SessionsListResult } from "./types.ts";
@@ -1025,13 +1026,18 @@ export function renderChatAgentHeader(state: AppViewState) {
   const agentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
   const agent = agents.find((a) => a.id === agentId);
 
+  const { defaultLabel } = resolveChatModelSelectState(state);
+  const shortModelLabel = formatModelName(defaultLabel || "")
+    .split(" · ")[0]
+    .trim();
+
   const getAgentDisplayName = (id: string, rawName?: string | null): string => {
     const trimmed = rawName?.trim();
     if (trimmed && trimmed !== "main") {
       return trimmed;
     }
     if (id === "main") {
-      return "Trợ lý hệ thống";
+      return shortModelLabel || "Trợ lý hệ thống";
     }
     return id;
   };
@@ -1039,10 +1045,14 @@ export function renderChatAgentHeader(state: AppViewState) {
   const agentName = getAgentDisplayName(agentId, agent?.identity?.name ?? agent?.name);
   const avatarUrl = agent?.identity?.avatarUrl?.trim() || null;
 
-  // Lấy label model đang dùng (nếu có)
+  const sessions = state.sessionsResult?.sessions ?? [];
+  const currentSession = sessions.find((s) => s.key === state.sessionKey);
+  const rawLabel = (currentSession as unknown as { label?: string })?.label;
+  const displayTitle =
+    cleanAutoTitleLabel(rawLabel) ||
+    state.sessionKey.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
 
-  const { defaultLabel } = resolveChatModelSelectState(state);
-  const modelLabel = formatModelName(defaultLabel || "");
+  const modelLabel = shortModelLabel;
 
   return html`
     <div class="chat-agent-header">
@@ -1050,12 +1060,12 @@ export function renderChatAgentHeader(state: AppViewState) {
         ${
           avatarUrl
             ? html`<img src=${avatarUrl} alt=${agentName} class="chat-agent-header__avatar-img" />`
-            : html`<div class="chat-agent-header__avatar-placeholder">${agentName.charAt(0).toUpperCase()}</div>`
+            : html`<div class="chat-agent-header__avatar-placeholder">${getProviderLogoSvg(modelLabel) || agentName.charAt(0).toUpperCase()}</div>`
         }
         <span class="chat-agent-header__status-dot"></span>
       </div>
       <div class="chat-agent-header__info">
-        <span class="chat-agent-header__name">${agentName}</span>
+        <span class="chat-agent-header__name">${displayTitle}</span>
         ${modelLabel ? html`<span class="chat-agent-header__model">${modelLabel}</span>` : nothing}
       </div>
     </div>
@@ -1131,6 +1141,8 @@ export function renderChatLeftPanel(
   state: AppViewState,
   onSessionSelect: (sessionKey: string) => void,
   onAgentSelect: (agentId: string) => void,
+  onNewSession: () => void,
+  widthRatio?: number,
 ) {
   const sessions = state.sessionsResult?.sessions ?? [];
   const currentKey = state.sessionKey;
@@ -1139,13 +1151,18 @@ export function renderChatLeftPanel(
   const parsed = parseAgentSessionKey(currentKey);
   const currentAgentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
 
+  const { defaultLabel } = resolveChatModelSelectState(state);
+  const shortModelLabel = formatModelName(defaultLabel || "")
+    .split(" · ")[0]
+    .trim();
+
   const getAgentDisplayName = (id: string, rawName?: string | null): string => {
     const trimmed = rawName?.trim();
     if (trimmed && trimmed !== "main") {
       return trimmed;
     }
     if (id === "main") {
-      return "Trợ lý hệ thống";
+      return shortModelLabel || "Trợ lý";
     }
     return id;
   };
@@ -1156,8 +1173,6 @@ export function renderChatLeftPanel(
     currentAgent?.identity?.name ?? currentAgent?.name,
   );
   const currentAgentAvatar = currentAgent?.identity?.avatarUrl?.trim() || null;
-  const { defaultLabel } = resolveChatModelSelectState(state);
-  const modelLabel = formatModelName(defaultLabel || "");
   const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
 
   const formatTime = (ts: number | undefined): string => {
@@ -1179,12 +1194,26 @@ export function renderChatLeftPanel(
   type SessionRow = { key: string; lastMessage?: string; updatedAt?: number };
 
   return html`
-    <div class="chat-left-panel">
+    <aside
+      class="chat-left-panel"
+      style=${widthRatio != null ? `flex: 0 0 ${widthRatio * 100}%; width: ${widthRatio * 100}%;` : ""}
+    >
       <div class="chat-left-panel__search">
-        <span class="chat-left-panel__search-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        </span>
-        <input type="text" class="chat-left-panel__search-input" placeholder="Tìm kiếm hội thoại..." ?disabled=${!state.connected} />
+        <div class="chat-left-panel__search-wrapper">
+          <span class="chat-left-panel__search-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </span>
+          <input type="text" class="chat-left-panel__search-input" placeholder="Tìm kiếm hội thoại..." ?disabled=${!state.connected} />
+        </div>
+        <button
+          class="chat-left-panel__new-btn"
+          title="Tạo hội thoại mới"
+          aria-label="New chat"
+          @click=${onNewSession}
+          ?disabled=${!state.connected}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </button>
       </div>
 
       <ul class="chat-left-panel__sessions" role="listbox" aria-label="Danh sách hội thoại">
@@ -1212,7 +1241,8 @@ export function renderChatLeftPanel(
                     ${
                       currentAgentAvatar
                         ? html`<img src=${currentAgentAvatar} alt="" />`
-                        : html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
+                        : getProviderLogoSvg(currentAgentName) ||
+                          html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
                     }
                   </div>
                   <div class="chat-left-panel__session-body">
@@ -1246,12 +1276,12 @@ export function renderChatLeftPanel(
                   ${
                     currentAgentAvatar
                       ? html`<img src=${currentAgentAvatar} alt="" />`
-                      : html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
+                      : getProviderLogoSvg(currentAgentName) ||
+                        html`<span>${currentAgentName.charAt(0).toUpperCase()}</span>`
                   }
                 </div>
                 <div class="chat-left-panel__agent-info">
                   <span class="chat-left-panel__agent-name">${currentAgentName}</span>
-                  ${modelLabel ? html`<span class="chat-left-panel__agent-model">${modelLabel}</span>` : nothing}
                 </div>
               </div>
             `
@@ -1271,7 +1301,8 @@ export function renderChatLeftPanel(
                         ${
                           avatarUrl
                             ? html`<img src=${avatarUrl} alt="" />`
-                            : html`<span>${name.charAt(0).toUpperCase()}</span>`
+                            : getProviderLogoSvg(name) ||
+                              html`<span>${name.charAt(0).toUpperCase()}</span>`
                         }
                       </div>
                       <span class="chat-left-panel__agent-name">${name}</span>

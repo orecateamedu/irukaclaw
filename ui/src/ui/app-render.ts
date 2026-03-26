@@ -9,14 +9,15 @@ import { refreshChatAvatar } from "./app-chat.ts";
 import { renderUsageTab } from "./app-render-usage-tab.ts";
 import {
   renderChatAgentHeader,
-  renderChatControls,
   renderChatLeftPanel,
   renderChatMobileToggle,
   renderTab,
   renderSidebarConnectionStatus,
   switchChatSession,
+  formatModelName,
 } from "./app-render.helpers.ts";
 import type { AppViewState } from "./app-view-state.ts";
+import { resolveChatModelSelectState } from "./chat-model-select-state.ts";
 import { loadAgentFileContent, loadAgentFiles, saveAgentFile } from "./controllers/agent-files.ts";
 import { loadAgentIdentities, loadAgentIdentity } from "./controllers/agent-identity.ts";
 import { loadAgentSkills } from "./controllers/agent-skills.ts";
@@ -595,24 +596,19 @@ export function renderApp(state: AppViewState) {
             : nothing
         }
         ${
-          state.tab === "config"
-            ? nothing
+          state.tab === "config" || isChat
+            ? state.lastError
+              ? html`<section class="content-header"><div class="page-meta"><div class="pill danger">${state.lastError}</div></div></section>`
+              : nothing
             : html`<section class="content-header">
               <div>
-                ${
-                  isChat
-                    ? renderChatAgentHeader(state)
-                    : html`<div class="page-title">${titleForTab(state.tab)}</div>`
-                }
-                ${isChat ? nothing : html`<div class="page-sub">${subtitleForTab(state.tab)}</div>`}
+                <div class="page-title">${titleForTab(state.tab)}</div>
+                <div class="page-sub">${subtitleForTab(state.tab)}</div>
               </div>
               <div class="page-meta">
                 ${state.lastError ? html`<div class="pill danger">${state.lastError}</div>` : nothing}
-                ${isChat ? renderChatControls(state) : nothing}
               </div>
             </section>`
-        }
-
         }
 
         ${
@@ -1390,14 +1386,22 @@ export function renderApp(state: AppViewState) {
                       const nextKey = buildAgentMainSessionKey({ agentId });
                       switchChatSession(state, nextKey);
                     },
+                    () => {
+                      state.resetToolStream();
+                      const parsed = parseAgentSessionKey(state.sessionKey);
+                      const nextKey = `agent:${parsed?.agentId || "main"}:${crypto.randomUUID()}`;
+                      switchChatSession(state, nextKey);
+                    },
+                    1 - state.splitRatio,
                   )}
                   <resizable-divider
                     .splitRatio=${1 - state.splitRatio}
-                    .minRatio=${0.2}
-                    .maxRatio=${0.45}
+                    .minRatio=${0.15}
+                    .maxRatio=${0.6}
                     @resize=${(e: CustomEvent) => state.handleSplitRatioChange(1 - e.detail.splitRatio)}
                   ></resizable-divider>
                   <div class="chat-layout__right">
+                    ${renderChatAgentHeader(state)}
                     ${renderChat({
                       sessionKey: state.sessionKey,
                       onSessionKeyChange: (next) => {
@@ -1511,7 +1515,14 @@ export function renderApp(state: AppViewState) {
                       onOpenSidebar: (content: string) => state.handleOpenSidebar(content),
                       onCloseSidebar: () => state.handleCloseSidebar(),
                       onSplitRatioChange: (ratio: number) => state.handleSplitRatioChange(ratio),
-                      assistantName: state.assistantName,
+                      assistantName:
+                        state.sessionKey.startsWith("agent:") &&
+                        !state.sessionKey.startsWith("agent:main:") &&
+                        !state.sessionKey.startsWith("agent:main")
+                          ? state.assistantName
+                          : formatModelName(resolveChatModelSelectState(state).defaultLabel || "")
+                              .split(" · ")[0]
+                              .trim() || state.assistantName,
                       assistantAvatar: state.assistantAvatar,
                       basePath: state.basePath ?? "",
                     })}

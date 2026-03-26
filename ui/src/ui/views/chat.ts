@@ -900,9 +900,7 @@ export function renderChat(props: ChatProps) {
   if (!props.loading && chatItems.length > 0) {
     const autoTitleClient = getAutoTitleClient();
     if (autoTitleClient) {
-      const messageGroups = chatItems
-        .filter((item) => item.type === "group")
-        .map((item) => item.group);
+      const messageGroups = chatItems.filter((item): item is MessageGroup => item.kind === "group");
       const currentLabel = (
         props.sessions?.sessions?.find((s) => s.key === props.sessionKey) as unknown as
           | { label?: string }

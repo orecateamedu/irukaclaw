@@ -1,37 +1,83 @@
 :root {
-  /* Background - Deep Navy inspired by IruKa */
-  --bg: #060D1A;
-  --bg-accent: #0A1325;
-  --bg-elevated: #0D1627;
-  --bg-hover: #111A2D;
-  --bg-muted: #111A2D;
+  /* Typography - IruKa Edu Scale System */
+  --mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  --font-body:
+    "Nunito", "Quicksand", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-body);
 
-  /* Card / Surface - Clear hierarchy between levels */
-  --card: #0D1627;
-  --card-foreground: #f0f0f2;
-  --card-highlight: rgba(255, 255, 255, 0.04);
-  --popover: #0D1627;
-  --popover-foreground: #f0f0f2;
+  /* Kích thước chữ (Font Sizes) - Đã chuẩn hóa cho Giáo dục/Chat */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px; /* Chuẩn mới: to, rõ ràng */
+  --text-md: 18px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 28px;
+
+  /* Độ đậm (Font Weights) */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Shadows - Bubbly, friendly depth */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+
+  /* Radii - Tròn trịa, an toàn, thân thiện */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+  --radius: 16px;
+
+  /* Transitions - Crisp and responsive */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.44, 2.2, 0.54, 1); /* Bouncy xịn hơn */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+
+  /* Nền Dark Mode (Deep Navy - IruKa Ocean) */
+  --bg: #060d1a;
+  --bg-accent: #0a1325;
+  --bg-elevated: #0d1627;
+  --bg-hover: #111a2d;
+  --bg-muted: #111a2d;
+
+  /* Card / Surface - Slate tint */
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  --card-highlight: rgba(255, 255, 255, 0.05);
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
 
   /* Panel */
-  --panel: #060D1A;
-  --panel-strong: #0D1627;
-  --panel-hover: #111A2D;
+  --panel: #060d1a;
+  --panel-strong: #0f172a;
+  --panel-hover: #111a2d;
   --chrome: rgba(6, 13, 26, 0.96);
   --chrome-strong: rgba(6, 13, 26, 0.98);
 
-  /* Text - Tương phản tối ưu (Dark Mode) */
-  --text: #ffffff;
+  /* Text - Tương phản vừa phải (Chống mỏi mắt) */
+  --text: #f8fafc;
   --text-strong: #ffffff;
-  --chat-text: #ffffff;
-  --muted: #cbd5e1;
-  --muted-strong: #94a3b8;
-  --muted-foreground: #cbd5e1;
+  --chat-text: #f8fafc;
+  --muted: #94a3b8;
+  --muted-strong: #cbd5e1;
+  --muted-foreground: #94a3b8;
 
   /* Border - Indigo tinted */
   --border: #162136;
-  --border-strong: #1F2D4A;
-  --border-hover: #293A60;
+  --border-strong: #1f2d4a;
+  --border-hover: #293a60;
   --input: #162136;
   --ring: #00a4ff;
 
@@ -46,7 +92,7 @@
   --primary-foreground: #ffffff;
 
   /* Secondary - IruKa Yellow/Gold */
-  --secondary: #0D1627;
+  --secondary: #0d1627;
   --secondary-foreground: #f0f0f2;
   --accent-2: #ffcc54;
   --accent-2-muted: rgba(255, 204, 84, 0.7);
@@ -71,74 +117,27 @@
   --focus-ring: 0 0 0 2px var(--bg), 0 0 0 3px color-mix(in srgb, var(--ring) 80%, transparent);
   --focus-glow: 0 0 0 2px var(--bg), 0 0 0 3px var(--ring), 0 0 16px var(--accent-glow);
 
-  /* Grid */
-  --grid-line: rgba(255, 255, 255, 0.03);
-
   /* Theme transition */
   --theme-switch-x: 50%;
   --theme-switch-y: 50%;
-
-  /* Typography - IruKa Scale System */
-  --mono:
-    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
-  --font-body: "SN Pro", "Inter", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: var(--font-body);
-
-  /* Kích thước chữ (Font Sizes) */
-  --text-xs: 12px;
-  --text-sm: 13px;
-  --text-base: 15px; /* Tăng lên 15px chuẩn dễ nhìn */
-  --text-md: 16px;
-  --text-lg: 18px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
-
-  /* Độ đậm (Font Weights) */
-  --fw-regular: 400;
-  --fw-medium: 500;
-  --fw-semibold: 600;
-  --fw-bold: 700;
-
-  /* Shadows - Subtle, layered depth */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 24px var(--accent-glow);
-
-  /* Radii - Slightly larger for modern feel */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
-  --radius: 10px;
-
-  /* Transitions - Crisp and responsive */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --duration-fast: 100ms;
-  --duration-normal: 180ms;
-  --duration-slow: 300ms;
 
   color-scheme: dark;
 }
 
 /* Light theme tokens apply to every light-mode family. */
 :root[data-theme-mode="light"] {
-  --bg: #f4f9fd;
+  --bg: #f4f9fd; /* Màu xanh pastel edu */
   --bg-accent: #eaf2fa;
   --bg-elevated: #ffffff;
-  --bg-hover: #eaf2fa;
-  --bg-muted: #eaf2fa;
+  --bg-hover: #e1eaf2;
+  --bg-muted: #e1eaf2;
   --bg-content: #f4f9fd;
 
-  --card: #ffffff;
-  --card-foreground: #1a1a1e;
-  --card-highlight: rgba(0, 0, 0, 0.02);
+  --card: #ffffff; /* Cần màu nền trắng trơn dể block chat nổi bật */
+  --card-foreground: #1e293b;
+  --card-highlight: rgba(0, 0, 0, 0.03);
   --popover: #ffffff;
-  --popover-foreground: #1a1a1e;
+  --popover-foreground: #1e293b;
 
   --panel: #f4f9fd;
   --panel-strong: #eaf2fa;
@@ -146,18 +145,18 @@
   --chrome: rgba(244, 249, 253, 0.96);
   --chrome-strong: rgba(244, 249, 253, 0.98);
 
-  /* Text - Tương phản tối ưu (Light Mode) */
-  --text: #000000;
-  --text-strong: #000000;
-  --chat-text: #000000;
-  --muted: #475569;
-  --muted-strong: #1e293b;
-  --muted-foreground: #475569;
+  /* Text - Ngăn ngừa mỏi mắt với xám xanh đậm */
+  --text: #1e293b;
+  --text-strong: #0f172a;
+  --chat-text: #1e293b;
+  --muted: #64748b;
+  --muted-strong: #475569;
+  --muted-foreground: #64748b;
 
-  --border: #e1eaf2;
-  --border-strong: #d1deeb;
-  --border-hover: #c4d6e8;
-  --input: #e1eaf2;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-hover: #94a3b8;
+  --input: #e2e8f0;
 
   --accent: #00a4ff;
   --accent-hover: #008ccc;
@@ -483,7 +482,7 @@ body {
 
 body {
   margin: 0;
-  font: 400 14px/1.55 var(--font-body);
+  font: 400 16px/1.6 var(--font-body); /* Set base size to 16px for education/chat apps */
   letter-spacing: -0.01em;
   background: var(--bg);
   color: var(--text);
@@ -493,7 +492,7 @@ body {
 
 @media (min-width: 1600px) {
   body {
-    font-size: 15px;
+    font-size: 17px;
   }
 }
 
@@ -792,9 +791,18 @@ a.nav-item[href^="https://docs"] {
 
 /* Hiệu ứng nhịp điệu (Pulse Zoom) */
 @keyframes irukaPulseZoom {
-  0% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)); }
-  50% { transform: scale(1.05); filter: drop-shadow(0 10px 15px rgba(255, 255, 255, 0.25)); }
-  100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)); }
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 15px rgba(255, 255, 255, 0.25));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  }
 }
 
 /* 4. Tuỳ chỉnh hiển thị logo to vừa phải và áp dụng Animation */
@@ -806,9 +814,9 @@ a.nav-item[href^="https://docs"] {
   width: 115px !important; /* Đã thu nhỏ lại cho tỷ lệ thanh thoát hơn */
   height: auto !important;
   object-fit: contain !important;
-  
+
   /* Hiệu ứng zoom lặp lại thả nổi */
-  animation: irukaPulseZoom 3.5s ease-in-out infinite; 
+  animation: irukaPulseZoom 3.5s ease-in-out infinite;
   transition: transform 0.3s ease;
 }
 
@@ -829,8 +837,12 @@ a.nav-item[href^="https://docs"] {
 
 /* ============ Sidebar Items (Trạng thái Rõ Ràng) ============ */
 .nav-item__text {
-  font-size: 16px !important; /* Trả về 16px cho gọn gàng */
+  font-size: 18px !important;
   font-weight: 600 !important; /* Vẫn giữ đậm để dễ đọc */
+}
+
+.sidebar-nav .nav-item {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 /* Khi rê chuột vào: Đổi luôn chữ sang màu Vàng, không có nền xám */
@@ -842,12 +854,12 @@ a.nav-item[href^="https://docs"] {
 /* Khi cấu hình Active: Nền vàng cam, chữ Navy đậm */
 .sidebar-nav .nav-item.nav-item--active {
   background-color: var(--accent-2) !important;
-  color: #060D1A !important;
+  color: #060d1a !important;
   font-weight: 700 !important;
   border-radius: 8px !important;
 }
 .sidebar-nav .nav-item.nav-item--active svg {
-  color: #060D1A !important;
+  color: #060d1a !important;
 }
 /* ================================================================= */
 

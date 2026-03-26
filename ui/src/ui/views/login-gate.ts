@@ -14,8 +14,7 @@ export function renderLoginGate(state: AppViewState) {
       <div class="login-gate__card">
         <div class="login-gate__header">
           <img class="login-gate__logo" src=${faviconSrc} alt="OpenClaw" />
-          <div class="login-gate__title">OpenClaw</div>
-          <div class="login-gate__sub">${t("login.subtitle")}</div>
+          <div class="login-gate__subtitle-custom">Nô Tài Xin Phục Vụ Minh Chủ</div>
         </div>
         <div class="login-gate__form">
           <label class="field">
@@ -62,7 +61,8 @@ export function renderLoginGate(state: AppViewState) {
               </button>
             </div>
           </label>
-          <label class="field">
+          <!-- Giấu ô Mật khẩu theo yêu cầu, bật lại khi cần thiết -->
+          <label class="field" style="display: none;">
             <span>${t("overview.access.password")}</span>
             <div class="login-gate__secret-row">
               <input
@@ -102,29 +102,34 @@ export function renderLoginGate(state: AppViewState) {
             ${t("common.connect")}
           </button>
         </div>
-        ${
-          state.lastError
-            ? html`<div class="callout danger" style="margin-top: 14px;">
-                <div>${state.lastError}</div>
-              </div>`
-            : ""
-        }
-        <div class="login-gate__help">
-          <div class="login-gate__help-title">${t("overview.connection.title")}</div>
-          <ol class="login-gate__steps">
-            <li>${t("overview.connection.step1")}<code>openclaw gateway run</code></li>
-            <li>${t("overview.connection.step2")}<code>openclaw dashboard --no-open</code></li>
-            <li>${t("overview.connection.step3")}</li>
-          </ol>
-          <div class="login-gate__docs">
-            <a
-              class="session-link"
-              href="https://docs.openclaw.ai/web/dashboard"
-              target="_blank"
-              rel="noreferrer"
-            >${t("overview.connection.docsLink")}</a>
-          </div>
-        </div>
+        ${(() => {
+          if (!state.lastError) {
+            return "";
+          }
+          let displayError = state.lastError;
+          if (displayError.includes("gateway token missing")) {
+            displayError =
+              "Lỗi kết nối: Vui lòng nhập khóa Gateway Token vào ô bên trên để được cấp phép truy cập.";
+          } else if (
+            displayError.includes("unauthorized") ||
+            displayError.includes("Authentication failed")
+          ) {
+            displayError = "Lỗi bảo mật: Gateway Token hoặc Mật khẩu không chính xác.";
+          } else if (
+            displayError.includes("timeout") ||
+            displayError.includes("refused") ||
+            displayError.includes("failed to parse")
+          ) {
+            displayError =
+              "Lỗi mạng: Không thể kết nối tới hệ thống. Vui lòng kiểm tra lại đường dẫn URL WebSocket.";
+          }
+          return html`
+            <div class="login-error-box">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <div class="login-error-box__text">${displayError}</div>
+            </div>
+          `;
+        })()}
       </div>
     </div>
   `;

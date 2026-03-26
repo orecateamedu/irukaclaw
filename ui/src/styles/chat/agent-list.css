@@ -21,11 +21,20 @@
 }
 
 .chat-left-panel__search {
-  padding: 12px;
+  padding: 0 12px;
+  height: 64px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-left-panel__search-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border);
+  flex: 1;
 }
 
 .chat-left-panel__search-icon {
@@ -41,11 +50,31 @@
   background: var(--panel-strong);
   border: 1px solid transparent;
   border-radius: 6px;
-  padding: 6px 12px 6px 32px;
+  padding: 8px 12px 8px 32px;
   font-size: 13px;
   color: var(--text);
   outline: none;
   transition: border-color 0.15s ease;
+}
+
+.chat-left-panel__new-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--panel-strong);
+  color: var(--text);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chat-left-panel__new-btn:hover {
+  background: color-mix(in srgb, var(--panel-strong) 80%, white 20%);
+  border-color: var(--muted);
 }
 
 .chat-left-panel__search-input:focus {
@@ -262,7 +291,9 @@
 .chat-agent-header {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  height: 64px;
+  box-sizing: border-box;
+  padding: 0 20px;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   flex-shrink: 0;
