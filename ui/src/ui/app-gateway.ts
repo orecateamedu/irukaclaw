@@ -375,6 +375,20 @@ function handleGatewayEventUnsafe(host: GatewayHost, evt: GatewayEventFrame) {
   }
 
   if (evt.event === "sessions.changed") {
+    // Cập nhật label ngay lập tức in-place để sidebar re-render tức thì,
+    // không cần đợi loadSessions hoàn thành (hoặc bị skip vì sessionsLoading=true).
+    const payload = evt.payload as
+      | { sessionKey?: string; label?: string; reason?: string }
+      | undefined;
+    if (payload?.sessionKey && typeof payload.label === "string" && host.sessionsResult) {
+      const sessions = host.sessionsResult.sessions as Array<Record<string, unknown>>;
+      const target = sessions.find((s) => s.key === payload.sessionKey);
+      if (target) {
+        target.label = payload.label;
+        // Trigger Lit re-render bằng cách gán lại tham chiếu object sessionsResult
+        host.sessionsResult = { ...host.sessionsResult, sessions: [...sessions] };
+      }
+    }
     void loadSessions(host as unknown as OpenClawApp);
     return;
   }

@@ -41,7 +41,14 @@ export type SessionsUsageAggregates = {
   tools: SessionToolUsage;
   byModel: SessionModelUsage[];
   byProvider: SessionModelUsage[];
-  byAgent: Array<{ agentId: string; totals: CostUsageSummary["totals"] }>;
+  byAgent: Array<{
+    agentId: string;
+    totals: CostUsageSummary["totals"];
+    /** Số sessions của agent này trong kỳ */
+    count: number;
+    /** Tổng tin nhắn user+assistant của agent này */
+    messages: number;
+  }>;
   byChannel: Array<{ channel: string; totals: CostUsageSummary["totals"] }>;
   latency?: SessionLatencyStats;
   dailyLatency?: SessionDailyLatency[];

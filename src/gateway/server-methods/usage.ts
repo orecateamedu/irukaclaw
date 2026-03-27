@@ -534,6 +534,8 @@ export const usageHandlers: GatewayRequestHandlers = {
     const byModelMap = new Map<string, SessionModelUsage>();
     const byProviderMap = new Map<string, SessionModelUsage>();
     const byAgentMap = new Map<string, CostUsageSummary["totals"]>();
+    const byAgentCountMap = new Map<string, number>();
+    const byAgentMessagesMap = new Map<string, number>();
     const byChannelMap = new Map<string, CostUsageSummary["totals"]>();
     const dailyAggregateMap = new Map<
       string,
@@ -691,6 +693,14 @@ export const usageHandlers: GatewayRequestHandlers = {
           const agentTotals = byAgentMap.get(agentId) ?? emptyTotals();
           mergeTotals(agentTotals, usage);
           byAgentMap.set(agentId, agentTotals);
+          // Track session count và message count per agent
+          byAgentCountMap.set(agentId, (byAgentCountMap.get(agentId) ?? 0) + 1);
+          const agentMsgCount =
+            (usage.messageCounts?.user ?? 0) + (usage.messageCounts?.assistant ?? 0);
+          byAgentMessagesMap.set(
+            agentId,
+            (byAgentMessagesMap.get(agentId) ?? 0) + agentMsgCount,
+          );
         }
 
         if (channel) {
@@ -791,7 +801,12 @@ export const usageHandlers: GatewayRequestHandlers = {
         return (b.totals?.totalTokens ?? 0) - (a.totals?.totalTokens ?? 0);
       }),
       byAgent: Array.from(byAgentMap.entries())
-        .map(([id, totals]) => ({ agentId: id, totals }))
+        .map(([id, totals]) => ({
+          agentId: id,
+          totals,
+          count: byAgentCountMap.get(id) ?? 0,
+          messages: byAgentMessagesMap.get(id) ?? 0,
+        }))
         .toSorted((a, b) => (b.totals?.totalCost ?? 0) - (a.totals?.totalCost ?? 0)),
       ...tail,
     };

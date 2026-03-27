@@ -5,6 +5,7 @@ import type {
   SessionsUsageTotals,
   SessionUsageTimePoint,
 } from "../usage-types.ts";
+import type { AgentsListResult } from "../types.ts";
 
 export type UsageSessionEntry = SessionsUsageEntry;
 export type UsageTotals = SessionsUsageTotals;
@@ -31,6 +32,8 @@ export type UsageDataState = {
   totals: UsageTotals | null;
   aggregates: UsageAggregates | null;
   costDaily: CostDailyEntry[];
+  /** Danh sách agents đang cấu hình (kể cả chưa có usage) */
+  agentsList: AgentsListResult | null;
 };
 
 export type UsageFilterState = {

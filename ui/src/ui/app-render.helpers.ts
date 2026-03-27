@@ -27,6 +27,50 @@ type SessionDefaultsSnapshot = {
   mainKey?: string;
 };
 
+/**
+ * Tính tiêu đề hiển thị cho session đang active.
+ * Ưu tiên: backend label (auto: prefix bị bóc) → derive từ chatMessages → fallback session key.
+ * Dùng chung cho header và sidebar để đảm bảo luôn đồng bộ.
+ */
+export function resolveActiveSessionDisplayTitle(state: AppViewState): string {
+  const sessions = state.sessionsResult?.sessions ?? [];
+  const currentSession = sessions.find((s) => s.key === state.sessionKey);
+  const rawLabel = (currentSession as unknown as { label?: string })?.label;
+
+  // Nếu đã có label từ backend (do auto-title đã patch trước đó) → dùng ngay
+  const labelFromBackend = cleanAutoTitleLabel(rawLabel);
+  if (labelFromBackend) return labelFromBackend;
+
+  // Derive từ chatMessages (nhanh, không cần round-trip, hiển thị ngay khi user gửi tin)
+  try {
+    if (Array.isArray(state.chatMessages) && state.chatMessages.length > 0) {
+      for (const rawMsg of state.chatMessages) {
+        const m = normalizeMessage(rawMsg);
+        if (m.role === "user") {
+          const content = m.content as string | Array<Record<string, unknown>>;
+          if (Array.isArray(content)) {
+            const textBlock = content.find(
+              (b) => b.type === "text" && typeof b.text === "string" && b.text.trim().length > 3,
+            );
+            if (textBlock && typeof textBlock.text === "string") {
+              return deriveTitle(textBlock.text);
+            }
+          } else if (typeof content === "string" && content.trim().length > 3) {
+            return deriveTitle(content);
+          }
+        }
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
+  // Fallback: lấy phần cuối của session key, replace 'main' bằng tên thân thiện
+  return state.sessionKey
+    .replace(/^agent:[^:]+:/, "")
+    .replace(/^main$/, "Hội thoại chính");
+}
+
 function resolveSidebarChatSessionKey(state: AppViewState): string {
   const snapshot = state.hello?.snapshot as
     | { sessionDefaults?: SessionDefaultsSnapshot }
@@ -566,7 +610,7 @@ export function resolveSessionDisplayName(
   key: string,
   row?: SessionsListResult["sessions"][number],
 ): string {
-  const label = row?.label?.trim() || "";
+  const label = cleanAutoTitleLabel(row?.label?.trim()) || "";
   const displayName = row?.displayName?.trim() || "";
   const { prefix, fallbackName } = parseSessionKey(key);
 
@@ -1046,47 +1090,8 @@ export function renderChatAgentHeader(state: AppViewState) {
   const agentName = getAgentDisplayName(agentId, agent?.identity?.name ?? agent?.name);
   const avatarUrl = agent?.identity?.avatarUrl?.trim() || null;
 
-  const sessions = state.sessionsResult?.sessions ?? [];
-  const currentSession = sessions.find((s) => s.key === state.sessionKey);
-  const rawLabel = (currentSession as unknown as { label?: string })?.label;
-  const defaultTitleFallback = state.sessionKey
-    .replace(/^agent:[^:]+:/, "")
-    .replace(/^main$/, "Hội thoại chính");
-
-  let fallbackDerived = defaultTitleFallback;
-  if (/^[0-9a-fA-F-]{36}$/.test(defaultTitleFallback)) {
-    // Nếu là UUID, lấy trực tiếp title tạm thời từ lịch sử chat
-    try {
-      if (Array.isArray(state.chatMessages) && state.chatMessages.length > 0) {
-        let firstUserText = "";
-        for (const rawMsg of state.chatMessages) {
-          const m = normalizeMessage(rawMsg);
-          if (m.role === "user") {
-            const content = m.content as string | Array<Record<string, unknown>>;
-            if (Array.isArray(content)) {
-              const textBlock = content.find(
-                (b) => b.type === "text" && typeof b.text === "string" && b.text.trim().length > 3,
-              );
-              if (textBlock && typeof textBlock.text === "string") {
-                firstUserText = textBlock.text;
-                break;
-              }
-            } else if (typeof content === "string" && content.trim().length > 3) {
-              firstUserText = content;
-              break;
-            }
-          }
-        }
-        if (firstUserText) {
-          fallbackDerived = deriveTitle(firstUserText);
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-
-  const displayTitle = cleanAutoTitleLabel(rawLabel) || fallbackDerived;
+  // Dùng hàm dùng chung để tính tiêu đề — đảm bảo header và sidebar luôn đồng bộ
+  const displayTitle = resolveActiveSessionDisplayTitle(state);
 
   const modelLabel = shortModelLabel;
 
@@ -1225,6 +1230,9 @@ export function renderChatLeftPanel(
   const sessions = state.sessionsResult?.sessions ?? [];
   const currentKey = state.sessionKey;
 
+  // Tiêu đề của session đang active — dùng hàm dùng chung để luôn đồng bộ với header
+  const activeSessionDisplayTitle = resolveActiveSessionDisplayTitle(state);
+
   const agents = state.agentsList?.agents ?? [];
   const parsed = parseAgentSessionKey(currentKey);
   const currentAgentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
@@ -1303,11 +1311,16 @@ export function renderChatLeftPanel(
             : sessions.slice(0, 80).map((rawSession) => {
                 const session = rawSession as unknown as SessionRow;
                 const isActive = session.key === currentKey;
-                // Ưu tiên hiển thị auto-title label (nếu có), fallback về session key thân thiện
+                // Với session đang active: dùng activeSessionDisplayTitle (đã đồng bộ với header,
+                // có thể derive từ chatMessages nếu chưa có backend label).
+                // Với các session khác: fallback label > derivedTitle > session key.
                 const rawLabel = (rawSession as unknown as { label?: string }).label;
-                const displayKey =
-                  cleanAutoTitleLabel(rawLabel) ||
-                  session.key.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
+                const derivedTitle = (rawSession as unknown as { derivedTitle?: string }).derivedTitle;
+                const displayKey = isActive
+                  ? activeSessionDisplayTitle
+                  : cleanAutoTitleLabel(rawLabel) ||
+                    derivedTitle ||
+                    session.key.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
                 return html`
                 <li
                   class="chat-left-panel__session ${isActive ? "chat-left-panel__session--active" : ""}"

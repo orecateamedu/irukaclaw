@@ -1,14 +1,11 @@
 /**
  * chat-title.ts
- * Auto-titling cho phiên chat: sau khi có đủ hội thoại, gọi AI sinh tiêu đề ngắn
- * và lưu vào backend qua sessions.patch { label }.
+ * Auto-titling cho phiên chat: sau khi user gửi tin đầu tiên, sinh tiêu đề ngắn
+ * (fallback heuristic ngay lập tức + AI trong nền) và lưu qua sessions.patch { label }.
  *
- * Logic:
- *   1. Đợi messages ≥ 3 (ít nhất 1 cặp user+assistant) và session chưa có label tùy chỉnh.
- *   2. Gọi sessions.patch với một đề xuất title dựa vào nội dung tin nhắn user đầu tiên.
- *   3. Không gọi lại nếu session đã có label từ trước (được đặt thủ công hoặc do auto).
- *
- * Cách gọi: `maybeTriggerAutoTitle(state, messageGroups)` từ nơi render chat.
+ * Cải tiến v2:
+ * - Dùng sessionStorage để lưu cache triggeredSessions bền vững qua reload trang.
+ * - Không re-trigger khi session đã có AI title ổn định (auto: + độ dài hợp lý).
  */
 
 import type { GatewayBrowserClient } from "../gateway.ts";
@@ -17,26 +14,62 @@ import type { MessageGroup } from "../types/chat-types.ts";
 /** Prefix để nhận biết label do hệ thống tự sinh (cho phép ghi đè khi topic thay đổi) */
 const AUTO_TITLE_PREFIX = "auto:";
 
-/** Cache tránh gọi lặp cho cùng session trong cùng phiên browser */
-const triggeredSessions = new Set<string>();
+/** Key lưu Set các sessionKey đã trigger trong sessionStorage */
+const STORAGE_KEY = "oc_auto_titled_sessions";
 
 /** Module-level singleton: GatewayBrowserClient được set bởi app.ts sau khi connect */
 let _globalClient: GatewayBrowserClient | null = null;
 
 /**
  * Đăng ký GatewayBrowserClient để module có thể dùng mà không cần truyền qua props.
- * Gọi từ app.ts mỗi khi client được tạo/connect.
  */
 export function setAutoTitleClient(client: GatewayBrowserClient | null): void {
   _globalClient = client;
 }
 
-/**
- * Trả về GatewayBrowserClient hiện tại (dùng trong views không có client qua props).
- */
 export function getAutoTitleClient(): GatewayBrowserClient | null {
   return _globalClient;
 }
+
+// ---------- sessionStorage helpers ----------
+
+function loadTriggeredSet(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      return new Set<string>(JSON.parse(raw) as string[]);
+    }
+  } catch {
+    /* ignore */
+  }
+  return new Set<string>();
+}
+
+function saveTriggeredSet(set: Set<string>): void {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+  } catch {
+    /* ignore */
+  }
+}
+
+function hasBeenTriggered(sessionKey: string): boolean {
+  return loadTriggeredSet().has(sessionKey);
+}
+
+function markTriggered(sessionKey: string): void {
+  const set = loadTriggeredSet();
+  set.add(sessionKey);
+  saveTriggeredSet(set);
+}
+
+function unmarkTriggered(sessionKey: string): void {
+  const set = loadTriggeredSet();
+  set.delete(sessionKey);
+  saveTriggeredSet(set);
+}
+
+// ---------- core helpers ----------
 
 /**
  * Trích xuất đoạn text đầu tiên có nghĩa từ MessageGroup của user.
@@ -65,45 +98,39 @@ export function extractFirstUserText(groups: MessageGroup[]): string {
 }
 
 /**
- * Sinh tiêu đề ngắn gọn (≤ 6 từ) từ nội dung câu hỏi đầu tiên của user.
- * Không gọi API AI — dùng heuristic tinh gọn để tránh roundtrip.
- * Nếu dự án sau này muốn nâng cấp lên AI, thay hàm này.
+ * Sinh tiêu đề ngắn gọn từ nội dung câu hỏi đầu tiên của user (heuristic).
  */
 export function deriveTitle(firstUserText: string): string {
-  // Bỏ xuống dòng, khoảng trắng thừa
   const cleaned = firstUserText.replace(/\s+/g, " ").replace(/["""]/g, '"').trim();
-
-  // Lấy câu đầu tiên hoặc tối đa 60 ký tự
   const sentence = cleaned.split(/[.!?\n]/)[0].trim();
   const short = sentence.length > 60 ? sentence.slice(0, 57) + "…" : sentence;
-
-  // Viết hoa chữ cái đầu
   return short.charAt(0).toUpperCase() + short.slice(1);
 }
 
 /**
- * Kiểm tra xem session đã có label tùy chỉnh chưa (có label hiện tại không phải auto).
+ * Kiểm tra xem session đã có label tùy chỉnh do người dùng đặt thủ công chưa.
+ * Label do hệ thống tự sinh có tiền tố "auto:" → cho phép ghi đè.
  */
 function hasCustomLabel(currentLabel: string | null | undefined): boolean {
-  if (!currentLabel) {
-    return false;
-  }
-  // Label do hệ thống tự sinh có tiền tố "auto:" — cho phép ghi đè
-  if (currentLabel.startsWith(AUTO_TITLE_PREFIX)) {
-    return false;
-  }
-  // Bất kỳ label nào khác => người dùng đã tự đặt, không ghi đè
-  return true;
+  if (!currentLabel) return false;
+  return !currentLabel.startsWith(AUTO_TITLE_PREFIX);
 }
 
 /**
- * Điểm vào chính: Gọi hàm này sau khi render danh sách message.
- * Sẽ tự động sinh và lưu label nếu đủ điều kiện.
- *
- * @param client - GatewayBrowserClient để gọi sessions.patch
- * @param sessionKey - key của phiên chat đang active
- * @param messageGroups - danh sách MessageGroup đã được render
- * @param currentLabel - label hiện tại của session (nếu có)
+ * Kiểm tra xem auto-title hiện tại đã "ổn định" chưa.
+ * "Ổn định" = đã có auto: label dài hơn 10 ký tự (không phải fallback UUID cắt ngắn).
+ * Khi ổn định, ta không gọi AI nữa dù cache bị reset.
+ */
+function isStableAutoTitle(currentLabel: string | null | undefined): boolean {
+  if (!currentLabel?.startsWith(AUTO_TITLE_PREFIX)) return false;
+  const content = currentLabel.slice(AUTO_TITLE_PREFIX.length).trim();
+  // Nếu content > 10 ký tự và không trông như UUID-cắt → coi là ổn định
+  return content.length > 10 && !/^[0-9a-fA-F-]{8,}/.test(content);
+}
+
+/**
+ * Điểm vào chính: Gọi sau khi render danh sách message.
+ * Sinh và lưu label nếu đủ điều kiện.
  */
 export async function maybeTriggerAutoTitle(
   client: GatewayBrowserClient | null,
@@ -111,49 +138,46 @@ export async function maybeTriggerAutoTitle(
   messageGroups: MessageGroup[],
   currentLabel?: string | null,
 ): Promise<void> {
-  // Điều kiện: cần đủ hội thoại + chưa trigger + không có label tùy chỉnh + có client
-  if (!client) {
-    return;
-  }
-  if (triggeredSessions.has(sessionKey)) {
-    return;
-  }
-  if (hasCustomLabel(currentLabel)) {
+  if (!client) return;
+
+  // Không ghi đè label người dùng đặt thủ công
+  if (hasCustomLabel(currentLabel)) return;
+
+  // Nếu đã có AI title ổn định → đánh dấu vào cache và dừng
+  if (isStableAutoTitle(currentLabel)) {
+    markTriggered(sessionKey);
     return;
   }
 
-  // Chỉ trigger sau khi có ≥ 1 user message (không cần đợi assistant, để cập nhật UI lập tức)
+  // Đã trigger trong session này (qua sessionStorage) → bỏ qua
+  if (hasBeenTriggered(sessionKey)) return;
+
+  // Chỉ trigger sau khi có ≥ 1 user message
   const userCount = messageGroups.filter((g) => g.role === "user").length;
-  if (userCount < 1) {
-    return;
-  }
+  if (userCount < 1) return;
 
-  // Đánh dấu đã trigger để không gọi lại trong session browser này
-  triggeredSessions.add(sessionKey);
+  // Đánh dấu đã trigger để không lặp lại trong session browser này
+  markTriggered(sessionKey);
 
   const firstUserText = extractFirstUserText(messageGroups);
-  if (!firstUserText) {
-    return;
-  }
+  if (!firstUserText) return;
 
   const fallbackTitle = deriveTitle(firstUserText);
-  if (!fallbackTitle || fallbackTitle.length < 3) {
-    return;
-  }
+  if (!fallbackTitle || fallbackTitle.length < 3) return;
 
-  // Lần 1: Gọi sessions.patch với fallback label để thay thế tức thì UUID trên thanh Sidebar
+  // Lần 1: Patch fallback ngay để thay thế UUID trên Sidebar lập tức
   try {
     await client.request("sessions.patch", {
       key: sessionKey,
       label: `${AUTO_TITLE_PREFIX}${fallbackTitle}`,
     });
   } catch {
-    // Xóa cache để cho phép thử lại nếu lỗi
-    triggeredSessions.delete(sessionKey);
+    // Xóa cache để cho phép thử lại nếu lỗi mạng
+    unmarkTriggered(sessionKey);
     return;
   }
 
-  // Lần 2: Gọi ngầm AI để sinh tiêu đề ngắn gọn thông minh hơn
+  // Lần 2: Gọi AI trong nền để sinh tiêu đề thông minh hơn
   try {
     const aiResponse = await client.postJson<{
       choices?: Array<{ message?: { content?: string } }>;
@@ -169,9 +193,8 @@ export async function maybeTriggerAutoTitle(
 
     let aiTitle = aiResponse?.choices?.[0]?.message?.content?.trim();
     if (aiTitle) {
-      // Làm sạch nếu AI lỡ tay trả về ngoặc kép ở 2 đầu
+      // Làm sạch nếu AI trả về ngoặc kép ở 2 đầu
       aiTitle = aiTitle.replace(/^["']|["']$/g, "").trim();
-
       if (aiTitle.length >= 2) {
         await client.request("sessions.patch", {
           key: sessionKey,
@@ -180,7 +203,7 @@ export async function maybeTriggerAutoTitle(
       }
     }
   } catch (err) {
-    // Thất bại thì giữ nguyên fallback title đã patch ở Lần 1
+    // Thất bại → giữ nguyên fallback title đã patch ở Lần 1
     console.warn("Auto-titling background AI request failed:", err);
   }
 }
@@ -189,9 +212,7 @@ export async function maybeTriggerAutoTitle(
  * Xóa tiền tố "auto:" khỏi label để hiển thị thân thiện trên UI.
  */
 export function cleanAutoTitleLabel(rawLabel: string | null | undefined): string | null {
-  if (!rawLabel) {
-    return null;
-  }
+  if (!rawLabel) return null;
   if (rawLabel.startsWith(AUTO_TITLE_PREFIX)) {
     return rawLabel.slice(AUTO_TITLE_PREFIX.length);
   }
