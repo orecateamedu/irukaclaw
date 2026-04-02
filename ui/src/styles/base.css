@@ -621,6 +621,18 @@ select {
   }
 }
 
+/* Animation bong bóng chat xuất hiện — dùng trong chat/grouped.css và chat/layout.css */
+@keyframes bubble-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;

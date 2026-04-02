@@ -697,10 +697,7 @@ export const usageHandlers: GatewayRequestHandlers = {
           byAgentCountMap.set(agentId, (byAgentCountMap.get(agentId) ?? 0) + 1);
           const agentMsgCount =
             (usage.messageCounts?.user ?? 0) + (usage.messageCounts?.assistant ?? 0);
-          byAgentMessagesMap.set(
-            agentId,
-            (byAgentMessagesMap.get(agentId) ?? 0) + agentMsgCount,
-          );
+          byAgentMessagesMap.set(agentId, (byAgentMessagesMap.get(agentId) ?? 0) + agentMsgCount);
         }
 
         if (channel) {

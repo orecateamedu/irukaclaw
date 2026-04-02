@@ -39,7 +39,9 @@ export function resolveActiveSessionDisplayTitle(state: AppViewState): string {
 
   // Nếu đã có label từ backend (do auto-title đã patch trước đó) → dùng ngay
   const labelFromBackend = cleanAutoTitleLabel(rawLabel);
-  if (labelFromBackend) return labelFromBackend;
+  if (labelFromBackend) {
+    return labelFromBackend;
+  }
 
   // Derive từ chatMessages (nhanh, không cần round-trip, hiển thị ngay khi user gửi tin)
   try {
@@ -66,9 +68,7 @@ export function resolveActiveSessionDisplayTitle(state: AppViewState): string {
   }
 
   // Fallback: lấy phần cuối của session key, replace 'main' bằng tên thân thiện
-  return state.sessionKey
-    .replace(/^agent:[^:]+:/, "")
-    .replace(/^main$/, "Hội thoại chính");
+  return state.sessionKey.replace(/^agent:[^:]+:/, "").replace(/^main$/, "Hội thoại chính");
 }
 
 function resolveSidebarChatSessionKey(state: AppViewState): string {
@@ -1315,7 +1315,8 @@ export function renderChatLeftPanel(
                 // có thể derive từ chatMessages nếu chưa có backend label).
                 // Với các session khác: fallback label > derivedTitle > session key.
                 const rawLabel = (rawSession as unknown as { label?: string }).label;
-                const derivedTitle = (rawSession as unknown as { derivedTitle?: string }).derivedTitle;
+                const derivedTitle = (rawSession as unknown as { derivedTitle?: string })
+                  .derivedTitle;
                 const displayKey = isActive
                   ? activeSessionDisplayTitle
                   : cleanAutoTitleLabel(rawLabel) ||
