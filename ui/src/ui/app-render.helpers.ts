@@ -1062,20 +1062,27 @@ export const formatModelName = (rawLabel: string): string => {
 };
 
 /**
- * Chat header kiểu Zalo: hiển thị avatar + tên agent đang chat,
- * kèm model đang dùng ở dòng phụ.
+ * Chat header phong cách Antigravity:
+ *   - Avatar 40px với glow ring màu --accent khi connected
+ *   - Tên agent in đậm + badge pill hiển thị tên model đang chạy
+ *   - Chấm trạng thái nhịp đập khi kết nối
+ *   - Nút "Đổi agent" nhỏ compact (chỉ hiện khi có >1 agent)
+ * Thay thế renderChatAgentHeader cũ (kiểu Zalo + dropdown select xấu).
  */
 export function renderChatAgentHeader(state: AppViewState) {
+  // ── Lấy thông tin agent đang active ──
   const agents = state.agentsList?.agents ?? [];
   const parsed = parseAgentSessionKey(state.sessionKey);
   const agentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
   const agent = agents.find((a) => a.id === agentId);
 
+  // ── Tên model ngắn gọn để hiển thị trong badge ──
   const { defaultLabel } = resolveChatModelSelectState(state);
   const shortModelLabel = formatModelName(defaultLabel || "")
     .split(" · ")[0]
     .trim();
 
+  // ── Hàm lấy tên hiển thị agent (tránh hiện "main" thô) ──
   const getAgentDisplayName = (id: string, rawName?: string | null): string => {
     const trimmed = rawName?.trim();
     if (trimmed && trimmed !== "main") {
@@ -1090,14 +1097,25 @@ export function renderChatAgentHeader(state: AppViewState) {
   const agentName = getAgentDisplayName(agentId, agent?.identity?.name ?? agent?.name);
   const avatarUrl = agent?.identity?.avatarUrl?.trim() || null;
 
-  // Dùng hàm dùng chung để tính tiêu đề — đảm bảo header và sidebar luôn đồng bộ
+  // ── Tiêu đề session dùng hàm chung để luôn đồng bộ với sidebar ──
   const displayTitle = resolveActiveSessionDisplayTitle(state);
-
   const modelLabel = shortModelLabel;
 
-  const onAgentChange = (e: Event) => {
-    const newId = (e.target as HTMLSelectElement).value;
-    state.sessionKey = `agent:${newId}:main`;
+  // ── Danh sách agent hiển thị (loại bỏ agent hệ thống ẩn) ──
+  const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
+
+  // ── Xử lý khi người dùng nhấn nút "Đổi agent" ──
+  // Tìm agent kế tiếp trong danh sách (vòng tròn) để switch nhanh
+  const handleSwitchAgent = () => {
+    if (visibleAgents.length <= 1) {
+      return;
+    }
+    const currentIdx = visibleAgents.findIndex((a) => a.id === agentId);
+    const nextAgent = visibleAgents[(currentIdx + 1) % visibleAgents.length];
+    if (!nextAgent) {
+      return;
+    }
+    state.sessionKey = `agent:${nextAgent.id}:main`;
     state.chatMessages = [];
     state.chatStream = null;
     state.chatRunId = null;
@@ -1110,109 +1128,140 @@ export function renderChatAgentHeader(state: AppViewState) {
     void state.loadAssistantIdentity();
   };
 
-  const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
+  // ── Class card: thêm --connected khi kết nối để kích hoạt glow CSS ──
+  const cardClass = `chat-agent-card ${state.connected ? "chat-agent-card--connected" : ""}`;
 
   return html`
-    <div class="chat-agent-header">
-      <div class="chat-agent-header__avatar">
+    <div class=${cardClass}>
+
+      <!-- Avatar với glow ring -->
+      <div class="chat-agent-card__avatar">
         ${
           avatarUrl
-            ? html`<img src=${avatarUrl} alt=${agentName} class="chat-agent-header__avatar-img" />`
-            : html`<div class="chat-agent-header__avatar-placeholder">${getProviderLogoSvg(modelLabel) || agentName.charAt(0).toUpperCase()}</div>`
+            ? html`<img src=${avatarUrl} alt=${agentName} class="chat-agent-card__avatar-img" />`
+            : html`
+                <div class="chat-agent-card__avatar-placeholder">
+                  ${getProviderLogoSvg(modelLabel) || agentName.charAt(0).toUpperCase()}
+                </div>
+              `
         }
-        <span class="chat-agent-header__status-dot"></span>
+        <span class="chat-agent-card__status-dot"></span>
       </div>
-      <div class="chat-agent-header__info">
-        <span class="chat-agent-header__name">${displayTitle}</span>
-        <div class="chat-agent-header__dropdown-wrapper">
+
+      <!-- Tên agent + model badge + nút đổi agent -->
+      <div class="chat-agent-card__info">
+        <span class="chat-agent-card__name">${displayTitle || agentName}</span>
+        <div class="chat-agent-card__meta">
+          ${
+            modelLabel
+              ? html`<span class="chat-agent-card__model-badge">${modelLabel}</span>`
+              : nothing
+          }
           ${
             visibleAgents.length > 1
               ? html`
-                  <select
-                    class="agent-chat__agent-select header-agent-select"
-                    .value=${agentId}
-                    @change=${onAgentChange}
+                  <button
+                    class="chat-agent-card__switch-btn"
+                    type="button"
+                    @click=${handleSwitchAgent}
                     ?disabled=${!state.connected || state.chatSending}
-                    title="Chọn Trợ lý"
+                    title="Đổi agent (${visibleAgents.length} agent)"
                   >
-                    ${visibleAgents.map((a) => {
-                      const name = a.identity?.name?.trim() || a.name?.trim() || a.id;
-                      const display =
-                        a.id === "main" && (!a.name || a.name === "main")
-                          ? "Trợ lý hệ thống"
-                          : name;
-                      return html`<option value=${a.id}>${display}</option>`;
-                    })}
-                  </select>
+                    ${icons.zap} Đổi agent
+                  </button>
                 `
-              : modelLabel
-                ? html`<span class="chat-agent-header__model">${modelLabel}</span>`
-                : nothing
+              : nothing
           }
         </div>
       </div>
+
     </div>
   `;
 }
 
 /**
- * Panel danh sách agent bên trái, kiểu cột chat Zalo.
- * Chỉ hiện các agent đã kết nối API thành công (có model catalog).
+ * Danh sách agent dạng chip compact trong cột trái — phong cách Antigravity.
+ *   - Mỗi chip: avatar 32px + tên + tên model nhỏ
+ *   - Active: viền accent + background glow + chấm accent bên phải
+ *   - Cuộn dọc khi có nhiều agent (max-height 200px, ẩn scrollbar)
+ *   - Chỉ hiện khi có >1 agent (1 agent thì header card đã đủ)
+ * Thay thế renderChatAgentList cũ (chat-agent-bar kiểu button to).
  */
 export function renderChatAgentList(state: AppViewState, onAgentSelect: (agentId: string) => void) {
   const agents = state.agentsList?.agents ?? [];
 
-  // Lấy agentId đang active
+  // ── AgentId đang active ──
   const parsed = parseAgentSessionKey(state.sessionKey);
   const currentAgentId = parsed?.agentId ?? state.agentsList?.defaultId ?? "main";
 
-  // Lọc agent: chỉ lấy agent có tên hoặc không phải hệ thống ẩn
+  // ── Chỉ lấy agent hiển thị được (loại ẩn hệ thống) ──
   const visibleAgents = agents.filter((a) => a.id && a.id !== "__system__");
 
-  // Xóa điều kiện ẩn sidebar do user muốn xem UI z-index
-
-  // Nếu không có agent nào hoặc chỉ có 1 agent duy nhất, không hiển thị thanh trợ lý
-  if (visibleAgents.length === 0) {
+  // Nếu chỉ có 1 agent hoặc không có, ẩn bar — header card đã đủ thông tin
+  if (visibleAgents.length <= 1) {
     return nothing;
   }
 
+  // ── Tên model ngắn để hiển thị trong chip ──
+  const { defaultLabel } = resolveChatModelSelectState(state);
+  const shortModelLabel = formatModelName(defaultLabel || "")
+    .split(" · ")[0]
+    .trim();
+
+  // ── Hàm lấy tên hiển thị agent ──
   const getDisplayName = (id: string, rawName?: string | null): string => {
     const trimmed = rawName?.trim();
-    if (trimmed) {
+    if (trimmed && trimmed !== "main") {
       return trimmed;
     }
     if (id === "main") {
-      return "Trợ lý hệ thống";
+      return shortModelLabel || "Trợ lý hệ thống";
     }
     return id;
   };
 
   return html`
-    <nav class="chat-agent-bar" aria-label="Chọn trợ lý">
-      ${visibleAgents.map((agent) => {
-        const name = getDisplayName(agent.id, agent.identity?.name ?? agent.name);
-        const avatarUrl = agent.identity?.avatarUrl?.trim() || null;
-        const isActive = agent.id === currentAgentId;
-        return html`
-          <button
-            class="chat-agent-bar__item ${isActive ? "chat-agent-bar__item--active" : ""}"
-            role="tab"
-            aria-selected=${isActive}
-            title="${name}"
-            @click=${() => onAgentSelect(agent.id)}
-          >
-            <div class="chat-agent-bar__avatar">
-              ${
-                avatarUrl
-                  ? html`<img src=${avatarUrl} alt=${name} />`
-                  : html`<span>${name.charAt(0).toUpperCase()}</span>`
-              }
-            </div>
-            <span class="chat-agent-bar__name">${name}</span>
-          </button>
-        `;
-      })}
-    </nav>
+    <div class="agent-chip-bar" role="navigation" aria-label="Chọn trợ lý">
+      <div class="agent-chip-bar__label">Trợ lý</div>
+      <div class="agent-chip-bar__list" role="tablist">
+        ${visibleAgents.map((agent) => {
+          const name = getDisplayName(agent.id, agent.identity?.name ?? agent.name);
+          const avatarUrl = agent.identity?.avatarUrl?.trim() || null;
+          const isActive = agent.id === currentAgentId;
+
+          // ── Model label: agent "main" dùng model global, agent khác dùng id ──
+          const chipModelLabel = agent.id === "main" ? shortModelLabel : agent.id;
+
+          return html`
+            <button
+              class="agent-chip ${isActive ? "agent-chip--active" : ""}"
+              role="tab"
+              aria-selected=${isActive}
+              title=${name}
+              @click=${() => onAgentSelect(agent.id)}
+            >
+              <!-- Avatar nhỏ 32px -->
+              <div class="agent-chip__avatar">
+                ${
+                  avatarUrl
+                    ? html`<img src=${avatarUrl} alt=${name} />`
+                    : html`<span>${name.charAt(0).toUpperCase()}</span>`
+                }
+              </div>
+
+              <!-- Tên + model nhỏ -->
+              <div class="agent-chip__body">
+                <span class="agent-chip__name">${name}</span>
+                ${chipModelLabel ? html`<span class="agent-chip__model">${chipModelLabel}</span>` : nothing}
+              </div>
+
+              <!-- Chấm active bên phải -->
+              <span class="agent-chip__dot" aria-hidden="true"></span>
+            </button>
+          `;
+        })}
+      </div>
+    </div>
   `;
 }
 

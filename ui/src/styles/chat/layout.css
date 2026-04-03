@@ -420,10 +420,19 @@
     box-shadow var(--duration-fast) ease;
 }
 
-/* Khi focus: highlight nhẹ border-top của compose bar (flat Zalo style) */
-.agent-chat__input:focus-within + .agent-chat__toolbar,
+/* ── Focus ring kiểu Antigravity terminal ──
+   Khi người dùng click vào ô nhập, toàn bộ vùng compose
+   sáng lên với viền accent + glow nhẹ — cảm giác terminal AI ── */
+.agent-chat__input:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 -2px 12px color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* Border-top của compose bar sáng lên khi focus ── */
 .chat-compose .chat-compose__inner:has(.agent-chat__input:focus-within) {
-  border-top-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  border-top-color: color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 /* Backdrop blur cho toàn compose area */

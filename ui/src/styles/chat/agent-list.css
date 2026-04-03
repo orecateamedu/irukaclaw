@@ -391,3 +391,367 @@
   border-top: 4px solid var(--muted);
   pointer-events: none;
 }
+
+/* =============================================
+   CHAT AGENT CARD — Phong cách Antigravity
+   =============================================
+   Thay thế .chat-agent-header cũ (kiểu Zalo đơn giản)
+   bằng card header cao cấp có:
+   - Avatar với glow ring màu --accent khi connected
+   - Tên agent + badge pill hiển thị model
+   - Status dot animation
+   - Nút đổi agent compact (chỉ hiện khi có >1 agent)
+   ============================================= */
+
+/* ── Container chính của agent card header ── */
+.chat-agent-card {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+/* ── Vùng avatar với glow ring ── */
+.chat-agent-card__avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Ảnh avatar ── */
+.chat-agent-card__avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  /* Viền mỏng nhét nhất quán ── */
+  border: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  transition: border-color var(--duration-normal) ease;
+}
+
+/* Khi connected: viền accent sáng hơn + glow nhẹ ── */
+.chat-agent-card--connected .chat-agent-card__avatar-img {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* Placeholder khi không có ảnh: chữ cái đầu ── */
+.chat-agent-card__avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel-strong));
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  transition:
+    border-color var(--duration-normal) ease,
+    box-shadow var(--duration-normal) ease;
+}
+
+/* Glow cho placeholder khi connected ── */
+.chat-agent-card--connected .chat-agent-card__avatar-placeholder {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Chấm trạng thái online ── */
+.chat-agent-card__status-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  border: 2px solid var(--bg);
+  transition: background var(--duration-normal) ease;
+}
+
+/* Khi connected: chấm xanh + animation nhịp đập ── */
+.chat-agent-card--connected .chat-agent-card__status-dot {
+  background: var(--ok, #22c55e);
+  animation: status-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ── Khu vực tên + badge ── */
+.chat-agent-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0; /* Cho phép text truncate */
+  flex: 1;
+}
+
+/* Tên agent — in đậm, truncate nếu dài ── */
+.chat-agent-card__name {
+  font-size: var(--text-base); /* 16px — hệ thống */
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dòng dưới: model badge + nút đổi agent ── */
+.chat-agent-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Badge pill hiển thị tên model đang chạy ── */
+.chat-agent-card__model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: var(--text-xs); /* 12px */
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  transition: background var(--duration-fast) ease;
+}
+
+/* Icon nhỏ trong badge (tuỳ chọn svg provider logo) ── */
+.chat-agent-card__model-badge svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Nút nhỏ "Đổi agent" — chỉ hiện khi có >1 agent ── */
+.chat-agent-card__switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  background: transparent;
+  font-size: var(--text-xs); /* 12px */
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    background var(--duration-fast) ease;
+}
+
+.chat-agent-card__switch-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.chat-agent-card__switch-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* =============================================
+   AGENT CHIP BAR — Danh sách agent compact
+   =============================================
+   Thay thế .chat-agent-bar cũ
+   Mỗi chip: avatar nhỏ + tên + model
+   Active: viền accent + background glow nhẹ
+   ============================================= */
+
+/* Container cuộn ngang khi nhiều agent ── */
+.agent-chip-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 8px 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  flex-shrink: 0;
+}
+
+/* Nhãn tiêu đề section ── */
+.agent-chip-bar__label {
+  font-size: var(--text-xs); /* 12px */
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 4px 4px;
+}
+
+/* Danh sách chip cuộn ngang ── */
+.agent-chip-bar__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  max-height: 200px; /* Cuộn khi có >4 agent */
+  scrollbar-width: none; /* Ẩn scrollbar Firefox */
+}
+
+.agent-chip-bar__list::-webkit-scrollbar {
+  display: none; /* Ẩn scrollbar Chrome/Safari */
+}
+
+/* ── Từng chip agent ── */
+.agent-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm); /* 8px */
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background var(--duration-fast) ease,
+    border-color var(--duration-fast) ease;
+  min-width: 0;
+}
+
+.agent-chip:hover {
+  background: color-mix(in srgb, var(--panel-strong) 50%, transparent);
+}
+
+/* Trạng thái active: viền accent + glow ── */
+.agent-chip--active {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.agent-chip--active:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Avatar nhỏ trong chip ── */
+.agent-chip__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel-strong));
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  transition: border-color var(--duration-fast) ease;
+}
+
+.agent-chip--active .agent-chip__avatar {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.agent-chip__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Khu vực chữ trong chip ── */
+.agent-chip__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Tên agent ── */
+.agent-chip__name {
+  font-size: var(--text-sm); /* 14px */
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.agent-chip--active .agent-chip__name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Tên model nhỏ bên dưới ── */
+.agent-chip__model {
+  font-size: var(--text-xs); /* 12px */
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* Dấu chấm active ở cạnh phải chip ── */
+.agent-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+}
+
+.agent-chip--active .agent-chip__dot {
+  opacity: 1;
+}
+
+/* ── Responsive: màn hình nhỏ hơn 600px ── */
+@media (max-width: 600px) {
+  .chat-agent-card {
+    height: 56px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .chat-agent-card__avatar,
+  .chat-agent-card__avatar-img,
+  .chat-agent-card__avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .chat-agent-card__name {
+    font-size: var(--text-sm); /* 14px mobile */
+  }
+
+  .chat-agent-card__model-badge {
+    max-width: 120px;
+  }
+}
